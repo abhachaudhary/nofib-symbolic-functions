@@ -1,0 +1,73 @@
+---------------------------------------
+	Imaginary suite
+---------------------------------------
+
+bernoulli
+~~~~~~~~~
+Assuming that bernoulli takes a function argument as well, I have added on more parameter to the function which
+takes Integer value and returns an Integer. Later, original bernoulli is applied on this value. Semantics of the program
+remains the same.
+Running it with --nrpc flag is throwing error right now, need to debug this.
+
+digits-of-e1
+~~~~~~~~~~~~
+Works with NRPC as well.
+
+tak
+~~~
+Output of this benchmark is weird, 
+e.g. ((coerce (main :: (IO ()))) :: (State# RealWorld) -> (((((#,#) LiftedRep) LiftedRep) (State# RealWorld)) ())) (State# RealWorld) = (#State# RealWorld, ()#)    
+| generated: 22, 23, 21
+ --- stdout --- 
+        ['2', '2', toEnum 10]
+
+x2n1
+~~~
+This is throwing base library error
+109 | {-# SPECIALISE phase :: Complex Double -> Double #-}
+    |                ^^^^^
+G2: /Users/abhachaudhary/.g2/base-4.9.1.0/Data/Complex.hs:109:16: error:
+    Not in scope: `phase'
+
+exp3_8
+~~~~~~
+I don;t see anything intresting in this code.
+
+
+gen_regexps
+~~~~~~~~~~~
+This one is throwing error.
+
+G2: get values parser error on "(error "line 42821 column 28: unknown constant str.>= (String String) ")" (line 1, column 2):
+unexpected "e"
+expecting "("
+CallStack (from HasCallStack):
+  error, called at src/G2/Solver/ParseSMT.hs:296:19 in g2-0.2.0.0-inplace:G2.Solver.ParseSMT
+
+
+kahan
+~~~~~
+Throwing error:
+
+G2: evalVar: bad input.Id (Name "runSTUArray" (Just "Data.Array.ST") 8214565720323788656 Nothing) (TyForAll (Id (Name "i" Nothing 6989586621679015682 Nothing) TYPE) (TyForAll (Id (Name "e" Nothing 6989586621679015683 Nothing) TYPE) (TyFun (TyForAll (Id (Name "s" Nothing 6989586621679015684 Nothing) TYPE) (TyApp (TyApp (TyCon (Name "ST" (Just "GHC.ST") 8214565720323794206 Nothing) (TyFun TYPE (TyFun TYPE TYPE))) (TyVar (Id (Name "s" Nothing 6989586621679015684 Nothing) TYPE))) (TyApp (TyApp (TyApp (TyCon (Name "STUArray" (Just "Data.Array.Base") 8214565720323788187 Nothing) (TyFun TYPE (TyFun TYPE (TyFun TYPE TYPE)))) (TyVar (Id (Name "s" Nothing 6989586621679015684 Nothing) TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679015682 Nothing) TYPE))) (TyVar (Id (Name "e" Nothing 6989586621679015683 Nothing) TYPE))))) (TyApp (TyApp (TyCon (Name "UArray" (Just "Data.Array.Base") 8214565720323788189 Nothing) (TyFun TYPE (TyFun TYPE TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679015682 Nothing) TYPE))) (TyVar (Id (Name "e" Nothing 6989586621679015683 Nothing) TYPE))))))
+CallStack (from HasCallStack):
+  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+
+paraffins
+~~~~~~~~~
+
+Throwing error
+G2: evalVar: bad input.Id (Name "!" (Just "GHC.Arr") 8214565720323788101 Nothing) (TyForAll (Id (Name "i" Nothing 6989586621679015325 Nothing) TYPE) (TyForAll (Id (Name "e" Nothing 6989586621679015326 Nothing) TYPE) (TyFun (TyApp (TyCon (Name "Ix" (Just "GHC.Ix") 3602879701896396818 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679015325 Nothing) TYPE))) (TyFun (TyApp (TyApp (TyCon (Name "Array" (Just "GHC.Arr") 8214565720323785669 Nothing) (TyFun TYPE (TyFun TYPE TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679015325 Nothing) TYPE))) (TyVar (Id (Name "e" Nothing 6989586621679015326 Nothing) TYPE))) (TyFun (TyVar (Id (Name "i" Nothing 6989586621679015325 Nothing) TYPE)) (TyVar (Id (Name "e" Nothing 6989586621679015326 Nothing) TYPE)))))))
+CallStack (from HasCallStack):
+  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+
+rfib
+~~~~
+G2: evalVar: bad input.Id (Name "$fShowDouble" (Just "GHC.Float") 8214565720323785590 Nothing) (TyApp (TyCon (Name "Show" (Just "GHC.Show") 8214565720323792427 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyCon (Name "Double" (Just "GHC.Types") 8214565720323791268 Nothing) TYPE))
+CallStack (from HasCallStack):
+  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+
+
+---------------------------------------
+	Spectral suite
+---------------------------------------
