@@ -42,6 +42,7 @@ kahan f vnum s c = do
                 let y = fromIntegral w - cj
                     t = sj + y
                     --w' = prng w
+                    -- SYMFUN: The following line makes use of symbolic function
                     w' = f w
                 unsafeWrite c j ((t-sj)-y)
                 unsafeWrite s j t

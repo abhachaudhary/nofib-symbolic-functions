@@ -26,6 +26,7 @@ zark u v = integrate2D 0.0 u 0.0 v (\x->(\y->x*y))
 
 -- type signature required for compilers lacking the monomorphism restriction
 ints = [1.0..] :: [Double]
+-- SYMFUN: The following line makes use of symbolic function
 zarks g = zipWith zark ints (map g ints)
 rtotals g = head (zarks g) : zipWith (+) (tail (zarks g)) (rtotals g)
 rtotal g n = rtotals g !! n

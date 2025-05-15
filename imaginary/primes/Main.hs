@@ -9,6 +9,7 @@ the_filter :: [Int] -> [Int]
 the_filter (n:ns) = filter (isdivs n) ns
 
 prime :: ([Int] -> [Int]) -> Int -> Int
+-- SYMFUN: The following line makes use of symbolic function
 prime f n = map head (iterate f [2..n*n]) !! n
 
 main = do

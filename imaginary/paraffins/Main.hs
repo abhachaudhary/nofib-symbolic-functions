@@ -6,7 +6,7 @@
  -}
 
 module Main (main) where
-import Data.Array
+import GHC.Arr
 import System.Environment
 import Control.Monad (replicateM_)
 
@@ -23,17 +23,18 @@ three_partitions m =
 remainders [] = []
 remainders (r:rs) = (r:rs) : (remainders rs)
 
-radical_generator :: Int -> Array Int [Radical]
-radical_generator n =
+radical_generator :: (Int -> [(Int,Int,Int)]) -> Int -> Array Int [Radical]
+radical_generator f n =
   radicals
  where
   radicals =
-    array (0,n) ((0,[H]) : [(j,rads_of_size_n radicals j) | j <- [1..n]])
+    array (0,n) ((0,[H]) : [(j,rads_of_size_n f radicals j) | j <- [1..n]])
 
-rads_of_size_n :: Array Int [Radical] -> Int -> [Radical]
-rads_of_size_n radicals n =
+rads_of_size_n :: (Int -> [(Int,Int,Int)]) -> Array Int [Radical] -> Int -> [Radical]
+rads_of_size_n f radicals n =
   [ (C ri rj rk)
-  | (i,j,k)  <- (three_partitions (n-1)),
+  -- SYMFUN: The following line makes use of symbolic function
+  | (i,j,k)  <- (f (n-1)),
     (ri:ris) <- (remainders (radicals!i)),
     (rj:rjs) <- (remainders (if (i==j) then (ri:ris) else radicals!j)),
     rk       <- (if (j==k) then (rj:rjs) else radicals!k)]
@@ -66,29 +67,30 @@ ccp_generator radicals n =
     (rk:rks)  <- (remainders (if (j==k) then (rj:rjs) else radicals!k)),
     rl        <- (if (k==l) then (rk:rks) else radicals!l)]
 
-bcp_until :: Int -> [Int]
-bcp_until n =
+bcp_until :: (Int -> [(Int,Int,Int)]) -> Int -> [Int]
+bcp_until f n =
   [length(bcp_generator radicals j) | j <- [1..n]]
  where
-  radicals = radical_generator (div n 2)
+  radicals = radical_generator f (div n 2)
 
-ccp_until :: Int -> [Int]
-ccp_until n =
+ccp_until :: (Int -> [(Int,Int,Int)]) -> Int -> [Int]
+ccp_until f n =
   [length(ccp_generator radicals j) | j <- [1..n]]
  where
-  radicals = radical_generator (div n 2)
+  radicals = radical_generator f (div n 2)
 
-paraffins_until :: Int -> [Int]
-paraffins_until n =
+paraffins_until :: (Int -> [(Int,Int,Int)]) -> Int -> [Int]
+paraffins_until f n =
   [length (bcp_generator radicals j) + length (ccp_generator radicals j)
    | j <- [1..n]]
  where
-  radicals = radical_generator (div n 2)
+  radicals = radical_generator f (div n 2)
 
 main = do
   arg <- mkSymbolic
+  symFun <- mkSymbolic
   let num = arg
-  print [length (rads!i) | rads <- [(radical_generator num)], i <- [0..num]]
-  print (bcp_until num)
-  print (ccp_until num)
-  print (paraffins_until num)
+  print [length (rads!i) | rads <- [(radical_generator symFun num)], i <- [0..num]]
+  print (bcp_until symFun num)
+  print (ccp_until symFun num)
+  print (paraffins_until symFun num)

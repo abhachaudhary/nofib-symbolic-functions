@@ -37,6 +37,7 @@ squares ps = [p*p | p<-ps]
 wheels :: (Wheel -> Int -> Wheel) -> [Int] -> [Wheel]
 wheels f ps = ws
   where
+    -- SYMFUN: The following line makes use of symbolic function
     ws = Wheel 1 [1] : zipWith f ws ps
 
 nextSize (Wheel s ns) p =

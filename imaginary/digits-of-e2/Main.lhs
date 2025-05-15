@@ -60,10 +60,11 @@ works.
 
 > e' :: (Int -> Int) -> Int -> String
 > e' f n =
->     take (f n) $
+>     take n $
 >     ("2."++) $
 >     tail . concat $
 >     map (show.head) $
+>     -- SYMFUN: The following line makes use of symbolic function
 >     iterate (carryPropagate 2 . map f . tail) $
 >     take (2*n) $ -- an upper bound on what the pipeline might consume
 >     2:[1,1..]

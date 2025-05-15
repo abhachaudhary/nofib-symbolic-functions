@@ -25,6 +25,7 @@ spiral f (Wheel s ms ns:ws) ps qs input =
   -- It's always the case that input^4 > head qs,
   -- but GHC doesn't know that. We do this so that stuff
   -- isn't floated to top-level into a CAF.
+  -- SYMFUN: The following line makes use of symbolic function
   q = f (input^4) (head qs)
 
 squares :: [Int] -> [Int]

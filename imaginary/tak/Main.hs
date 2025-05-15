@@ -6,6 +6,7 @@ import G2.Symbolic
 
 tak :: (Int -> Int -> Bool) -> Int -> Int -> Int -> Int
 
+-- SYMFUN: The following line makes use of symbolic function
 tak f x y z = if f x y then z
        else tak f (tak f (x-1) y z)
 		(tak f (y-1) z x)
