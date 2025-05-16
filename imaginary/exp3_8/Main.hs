@@ -20,7 +20,7 @@ import System.Environment
 
 import G2.Symbolic
 
-infix 8 ^^^
+--infix 8 ^^^
 
 data Nat = Z | S Nat deriving (Eq,Ord, Show {-was:Text-})
 
@@ -37,13 +37,17 @@ int :: Nat -> Int
 int Z     = 0
 int (S x) = 1 + int x
 
-x ^^^ Z _  = S Z
-x ^^^ S y f = x * f (x ^^^ y f)
+{-x ^^^ Z   = S Z
+x ^^^ S y = x * (x ^^^ y)-}
+
+exponent2 :: (Nat -> Nat) -> Nat -> Nat -> Nat
+exponent2 f x Z = f (S Z)
+exponent2 f x (S y) = x * (exponent2 f x y)
 
 main = do
   power <- mkSymbolic
   symFun <- mkSymbolic
-  print $ int (3 ^^^ (fromInteger $ power) symFun)
+  print $ int (exponent2 symFun 3 (fromInteger power))
 
 --
 -- Timing for hbc version 0.997.2

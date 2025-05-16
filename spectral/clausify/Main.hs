@@ -38,13 +38,15 @@ module Main(main) where
 
 import Data.Ix
 import System.Environment
-import Control.Monad (forM_)
 
-main = forM_ [1..67] $ const $ do
-  (n:_) <- getArgs
-  putStr (res (read n))
+import G2.Symbolic
 
-res n = concat (map clauses xs)
+main = do
+  n <- mkSymbolic
+  symFun <- mkSymbolic
+  putStr (res symFun n)
+
+res f n = concat (map (clauses f) xs)
  where xs = take n (repeat "(a = a = a) = (a = a = a) = (a = a = a)")
        {-# NOINLINE xs #-}
 
@@ -66,7 +68,8 @@ clause p = clause' p ([] , [])
            clause' (Not (Sym s)) (c,a) = (c , insert s a)
 
 -- the main pipeline from propositional formulae to printed clauses
-clauses = concat . map disp . unicl . split . disin . negin . elim . parse
+-- SYMFUN: The following line makes use of symbolic function
+clauses f = concat . map disp . unicl . split . disin . f . elim . parse
 
 conjunct (Con p q) = True
 conjunct p = False

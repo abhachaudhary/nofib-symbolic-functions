@@ -6,18 +6,20 @@
 import Data.List
 import Prelude hiding (Maybe(Just,Nothing), null, length, or, foldr, maximum, concat, foldl, foldr1, foldl1, sum, all, elem, notElem)
 import System.Environment
-import Control.Monad (forM_)
+
+import G2.Symbolic
 
 -----------------------------
 -- The main program
 -----------------------------
 
-main = forM_ [1..240] $ const $ do
-  [arg] <- getArgs
+main = do
+  arg <- mkSymbolic
+  symFun <- mkSymbolic
   let
     n = read arg :: Int
     try algorithm = print (length (search algorithm (queens n)))
-  sequence_ (map try [bt, bm, bjbt, bjbt', fc])
+  sequence_ (map try [(bt symFun), bm, (bjbt symFun), (bjbt' symFun), fc])
 
 -----------------------------
 -- Figure 1. CSPs in Haskell.
@@ -149,15 +151,15 @@ search :: Labeler -> CSP -> [State]
 search labeler csp =
   (map fst . filter (knownSolution . snd) . leaves . prune (knownConflict . snd) . labeler csp . mkTree) csp
 
-bt :: Labeler
-bt csp = mapTree f
+bt :: (CSP -> State -> ConflictSet) -> Labeler
+bt g csp = mapTree f
       where f s = (s,
                    case earliestInconsistency csp s of
-                     Nothing    -> checkComplete csp s
+                     Nothing    -> g csp s
                      Just (a,b) -> Known [a,b])
 
-btsolver :: CSP -> [State]
-btsolver = search bt
+btsolver :: (CSP -> State -> ConflictSet) -> CSP -> [State]
+btsolver g = search (bt g)
 
 -------------------------------------
 -- Figure 7. Randomization heuristic.
@@ -167,8 +169,8 @@ hrandom :: Int -> Transform a a
 hrandom seed (Node a cs) = Node a (randomList seed' (zipWith hrandom (randoms seed') cs))
   where seed' = random seed
 
-btr :: Int -> Labeler
-btr seed csp = bt csp . hrandom seed
+btr :: (CSP -> State -> ConflictSet) -> Int -> Labeler
+btr g seed csp = bt g csp . hrandom seed
 
 ---------------------------------------------
 -- Support for random numbers (not in paper).
@@ -227,11 +229,11 @@ lookupCache csp t = mapTree f t
 -- Figure 10. Conflict-directed backjumping.
 --------------------------------------------
 
-bjbt :: Labeler
-bjbt csp = bj csp . bt csp
+bjbt :: (CSP -> State -> ConflictSet) -> Labeler
+bjbt g csp = bj csp . bt g csp
 
-bjbt' :: Labeler
-bjbt' csp = bj' csp . bt csp
+bjbt' :: (CSP -> State -> ConflictSet) -> Labeler
+bjbt' g csp = bj' csp . bt g csp
 
 bj :: CSP -> Transform (State, ConflictSet) (State, ConflictSet)
 bj csp = foldTree f

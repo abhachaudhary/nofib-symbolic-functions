@@ -12,6 +12,8 @@ import Data.Char
 import System.Environment
 import Control.Monad
 
+import G2.Symbolic
+
 -- To keep it backward compatible with pre-Haskell 98 compilers..
 #define fail ioError
 
@@ -110,8 +112,9 @@ cal year = unlines (banner year `above` body year)
 -- For a standalone calendar program:
 
 main = do
-    (year:n:_) <- getArgs
-    forM_ [1..read n] (calFor year)
+      year <- mkSymbolic
+      n <- mkSymbolic
+      calFor year n
 
 calFor year i | illFormed = fail (userError "Bad argument")
               | otherwise = print (length (cal yr))
