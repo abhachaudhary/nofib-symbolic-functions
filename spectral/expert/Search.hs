@@ -46,16 +46,16 @@ freshCopy (Soln env vs) p =
 -- (a relation) is solved either by consulting the stored definitions, or by
 -- asking the user a question, depending on the verb in that relation.
 
-solve db (Question q) g = [Question q]
+solve f db (Question q) g = [Question (f q)]
 
-solve db soln (Term "or" [g1,g2]) =
-   solve db soln g1 ++ solve db soln g2
+solve f db soln (Term "or" [g1,g2]) =
+   solve f db soln g1 ++ solve f db soln g2
 
-solve db soln (Term "and" [g1,g2]) =
-   concat [solve db res g2 | res <- solve db soln g1]
+solve f db soln (Term "and" [g1,g2]) =
+   concat [solve f db res g2 | res <- solve f db soln g1]
 
-solve db soln g =
-   if not (null rs) then lookUp db soln g rs else ask info soln g
+solve f db soln g =
+   if not (null rs) then lookUp f db soln g rs else ask info soln g
    where
    (defs,info) = db
    rs = relevant defs g
@@ -66,12 +66,12 @@ solve db soln g =
 -- rule matches the goal. If it does, the goal on the right hand side of the
 -- rule is used to continue the search for solutions.
 
-lookUp db soln g rs =
-   concat [try db soln' g r' | (soln',r') <- copies] where
+lookUp f db soln g rs =
+   concat [try f db soln' g r' | (soln',r') <- copies] where
    copies = [freshCopy soln r | r<-rs]
 
-try db (Soln env vs) g (Term "if" [p,newg]) =
-   if fails m then [] else solve db (Soln (answer m) vs) newg
+try f db (Soln env vs) g (Term "if" [p,newg]) =
+   if fails m then [] else solve f db (Soln (answer m) vs) newg
    where
    m = match env g p
 

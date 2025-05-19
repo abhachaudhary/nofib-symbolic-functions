@@ -16,12 +16,16 @@ mechvel@botik.ru
 
 import System.Environment
 
+import G2.Symbolic
+
 --------------------------------------------------------------------
              -- choose d from [100..9000] and switch Z = Int,Integer
 type Z = Integer
 
 main =  do
-        (arg:_) <- getArgs
+        arg <- mkSymbolic
+        symFun1 <- mkSymbolic
+        symFun2 <- mkSymbolic
 	-- compute  extendedGCD x y = (g,u,v)
         -- for many  x,y  and find  maximum [abs (g+u+v)]
         let
@@ -30,7 +34,7 @@ main =  do
           ns     = [n..(n+d)]
           ms     = [m..(m+d)]
           pairs  = [(x,y)| x<-ns, y<-ms]         -- (d+1)^2 of pairs
-          tripls = map (\ (x,y)->(x,y,gcdE x y)) pairs
+          tripls = map (\ (x,y)->(x,y,gcdE symFun1 symFun2 x y)) pairs
 
           rs     = map (\ (_,_,(g,u,v))-> abs (g+u+v)) tripls
 
@@ -46,15 +50,15 @@ test (x,y,(d,u,v)) =  d==(u*x+v*y)  &&  d==(gcd x y)
 
 -- gcdE x y -> (d,u,v):   d = gcd(x,y) = u*x + v*y
 
-gcdE :: Integral a => a -> a -> (a,a,a)
+gcdE :: Integral a => ((a -> a -> (a, a)) -> (a, a)) -> (a -> a -> (a, a)) -> a -> a -> (a,a,a)
 
-gcdE 0 y = (y,0,1)
-gcdE x y = g (1,0,x) (0,1,y)
+gcdE f h 0 y = (y,0,1)
+gcdE f h x y = g (1,0,x) (0,1,y)
   where
   g (u1,u2,u3) (v1,v2,v3) =
                    if  v3==0  then  (u3,u1,u2)
                    else
-                     case  quotRem u3 v3
+                     case  f h
                      of
                        (q,r) -> g (v1,v2,v3) (u1-q*v1, u2-q*v2, r)
 

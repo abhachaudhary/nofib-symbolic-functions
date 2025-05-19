@@ -10,8 +10,8 @@ import Auxil
 import Key
 import Data.List (intersperse)
 
-prog :: Int -> String
-prog n = show (cichelli n)
+prog :: (HashSet -> HashFun) -> Int -> String
+prog f n = show (cichelli f n)
 
 data Status a = NotEver Int | YesIts Int a deriving ()
 instance (Show a) => Show (Status a) where
@@ -34,8 +34,8 @@ instance (Show a) => Show (Status a) where
 
 type FeedBack = Status HashFun
 
-cichelli :: Int -> FeedBack
-cichelli n = findhash hashkeys
+cichelli :: (HashSet -> HashFun) -> Int -> FeedBack
+cichelli f n = findhash f hashkeys
                 where
 -- #ifdef SORTED
 		attribkeys' = attribkeys (keys ++ take (n `mod` 2) keys)
@@ -45,14 +45,14 @@ cichelli n = findhash hashkeys
 -- #endif
 
 
-findhash :: [Key] -> FeedBack
-findhash = findhash' (H Nothing Nothing []) []
+findhash :: (HashSet -> HashFun) -> [Key] -> FeedBack
+findhash f = findhash' (H Nothing Nothing []) f
 
 
-findhash' :: HashSet -> HashFun -> [Key] -> FeedBack
-findhash' keyHashSet charAssocs [] = (YesIts 1 charAssocs)
-findhash' keyHashSet charAssocs (k@(K s a z n):ks) =
-  ( case (assocm a charAssocs, assocm z charAssocs) of
+findhash' :: HashSet -> (HashSet -> HashFun) -> [Key] -> FeedBack
+findhash' keyHashSet f [] = (YesIts 1 (f keyHashSet))
+findhash' keyHashSet f (k@(K s a z n):ks) =
+  ( case (assocm a (f keyHashSet), assocm z (f keyHashSet)) of
 	  (Nothing,Nothing) -> if a==z then
 				firstSuccess (\m->try [(a,m)]) [0..maxval]
 				else
@@ -64,9 +64,9 @@ findhash' keyHashSet charAssocs (k@(K s a z n):ks) =
   where
   try newAssocs = ( case hinsert (hash newCharAssocs k) keyHashSet of
              Nothing -> (NotEver 1)
-             Just newKeyHashSet -> findhash' newKeyHashSet newCharAssocs ks )
+             Just newKeyHashSet -> findhash' newKeyHashSet f ks )
              where
-             newCharAssocs = newAssocs ++ charAssocs
+             newCharAssocs = newAssocs ++ (f keyHashSet)
 
 -- Returns the first successful `working' function on a list of possible arguments
 firstSuccess :: (a -> FeedBack) -> [a] -> FeedBack

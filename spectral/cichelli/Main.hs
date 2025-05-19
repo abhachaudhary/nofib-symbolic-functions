@@ -7,4 +7,5 @@ import G2.Symbolic
 
 main = do
     n <- mkSymbolic
-    putStr (prog n)
+    symFun <- mkSymbolic
+    putStr (prog symFun n)

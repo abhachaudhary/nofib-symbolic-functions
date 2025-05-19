@@ -3,6 +3,8 @@ module Main (main) where
 import System.Environment
 import Control.Monad
 
+import G2.Symbolic
+
 -- A vector is a pair of floats
 type Vec = (Int, Int)
 
@@ -129,7 +131,6 @@ fmt (x:xs) = (showString "[\n" . showsPrec 0 x . showl xs) ""
 	-- to avoid bizarre comparison numbers
 
 main = do
-  (n:_) <- getArgs
-  forM_ [1..read n] $ \i -> do
-    let n = min 0 i
-    length (fmt (pseudolimit (0, 0) (640+n, 0) (0,640+n))) `seq` return ()
+  i <- mkSymbolic
+  let n = min 0 i
+  length (fmt (pseudolimit (0, 0) (640+n, 0) (0,640+n))) `seq` return ()

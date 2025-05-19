@@ -8,6 +8,8 @@ import Data.Maybe
 import Text.PrettyPrint
 import qualified Data.Map as Map
 
+import G2.Symbolic
+
 ----------------------------
 --	Driver
 

@@ -7,11 +7,15 @@ import Data.Ratio
 import Data.Char
 import System.Environment
 
+import G2.Symbolic
+
 -- Should print exactly zero
 main = do
-  (s:_) <- getArgs
+  s <- mkSymbolic
   let n = read s :: Int
   print (sum (map (\x -> sin (x * pi)) [1..fromIntegral n::CR]))
+
+main2 n symFun = sum (map (\x -> sin (x * pi)) [1..fromIntegral n::CR])
 
 
 digits :: Int   -- number of printed decimal digits

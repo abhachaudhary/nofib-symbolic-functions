@@ -16,6 +16,8 @@ module Main (main) where
 import Control.Monad
 import System.Environment
 
+import G2.Symbolic
+
 algb :: (Eq a) => [a] -> [a] -> [Int]
 algb xs ys
   = 0 : algb1 xs [ (y,0) | y <- ys ]
@@ -53,9 +55,17 @@ algc m n xs ys
 lcss :: (Eq a) => [a] -> [a] -> [a]
 lcss xs ys = algc (length xs) (length ys) xs ys []
 
-main = replicateM_ 500 $ do
- [a,b,c,d,e,f] <- getArgs
- let a', b', c', d', e', f' :: Int
-     a' = read a; b' = read b; c' = read c;
-     d' = read d; e' = read e; f' = read f
- print (lcss [a',b'..c'] [d',e'..f'])
+main = do
+  a <- mkSymbolic
+  b <- mkSymbolic
+  c <- mkSymbolic
+  d <- mkSymbolic
+  e <- mkSymbolic
+  f <- mkSymbolic
+  let a' = read a :: Int
+  let b' = read b :: Int
+  let c' = read c :: Int
+  let d' = read d :: Int
+  let e' = read e :: Int
+  let f' = read f :: Int
+  print (lcss [a',b'..c'] [d',e'..f'])

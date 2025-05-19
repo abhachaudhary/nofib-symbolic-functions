@@ -57,12 +57,13 @@ first understand binomial queues.  See, for example, David King's
 
 > -- partain
 >module Main (main) where
->import Data.Array
+>import GHC.Arr
 >import System.Environment
 
 >import Control.Monad (forM_)
 >import Control.Monad.ST
 >import Data.Array.ST
+>import G2.Symbolic
 
                          --------------------
 
@@ -276,29 +277,33 @@ functionally.
 
 Testing...
 
->fibToList :: (Ord a) => FibHeap a -> [a]
->fibToList xs = if isEmptyFH xs then []
->               else minFH xs : fibToList (deleteMinFH xs)
+f :: ((List -> List)-> List) -> List
+
+>fibToList :: (Ord a) => (FibHeap a -> FibHeap a) -> FibHeap a -> [a]
+>fibToList f xs = if isEmptyFH xs then []
+>               else minFH xs : fibToList f (deleteMinFH (f xs))
 >
->fibToList' :: (Ord a) => FibHeap a -> [a]
->fibToList' xs = if isEmptyFH xs then []
->                else minFH xs : fibToList' (deleteMinFH' xs)
+>fibToList' :: (Ord a) => (FibHeap a -> FibHeap a) -> FibHeap a -> [a]
+>fibToList' f xs = if isEmptyFH xs then []
+>                else minFH xs : fibToList' f (deleteMinFH' (f xs))
 >
 >makeFH :: (Ord a) => [a] -> FibHeap a
 >makeFH xs = foldr insertFH emptyFH xs
 >
->fibSort :: (Ord a) => [a] -> [a]
->fibSort = fibToList . makeFH
+>fibSort :: (Ord a) => (FibHeap a -> FibHeap a) -> [a] -> [a]
+>fibSort f = fibToList f . makeFH
 >
->fibSort' :: (Ord a) => [a] -> [a]
->fibSort' = fibToList' . makeFH
+>fibSort' :: (Ord a) => (FibHeap a -> FibHeap a) -> [a] -> [a]
+>fibSort' f = fibToList' f . makeFH
 >
 >randoms :: Int -> [Int]
 >randoms n = take n (iterate (\seed-> (77*seed+1) `rem` 1024) 1967)
 >
->test n = fibSort (randoms n) == fibSort' (randoms n)
+>test f g n = fibSort f (randoms n) == fibSort' f (randoms n)
 
 >--partain
->main = forM_ [1..200] $ const $ do
->   [n] <- getArgs
->   test (read n) `seq` return ()
+>main = do
+>   n <- mkSymbolic
+>   test n `seq` return ()
+
+>main2 symFun1 symFun2 n = test symFun1 symFun2 n

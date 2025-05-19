@@ -44,17 +44,19 @@ import Control.Monad.Trans.State.Strict
 import Data.Functor.Identity
 import Control.Monad (replicateM_)
 
+import G2.Symbolic
+
 main :: IO ()
-main = replicateM_ 100 $ do { mainSimple ; mainMonad }
+main = do { mainSimple ; mainMonad }
 
 mainSimple =
-    do  args <- getArgs
+    do  args <- mkSymbolic
 	if null args
 	   then putStrLn "Args: number-to-sum-up-to"
 	   else putStrLn (show (simpleEval [] (App sum0 (Con (read(head args))))))
 
 mainMonad =
-    do  args <- getArgs
+    do  args <- mkSymbolic
 	if null args
 	   then putStrLn "Args: number-to-sum-up-to"
 	   else (ev (App sum0 (Con (read(head args))))) >> return ()

@@ -111,13 +111,16 @@ cal year = unlines (banner year `above` body year)
 
 -- For a standalone calendar program:
 
-main = do
+{-main = do
       year <- mkSymbolic
       n <- mkSymbolic
-      calFor year n
+      symFun <- mkSymbolic
+      calFor year n-}
 
-calFor year i | illFormed = fail (userError "Bad argument")
-              | otherwise = print (length (cal yr))
+main2 year n symFun = calFor year n symFun
+
+calFor year i f | illFormed = -1 -- -1 represents error "Bad argument"
+              | otherwise = length (cal yr)
 			  -- SDM: changed to print the length, otherwise
 			  -- stdout file is too huge.
                 where illFormed = null ds || not (null rs)

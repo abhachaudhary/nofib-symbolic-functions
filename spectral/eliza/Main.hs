@@ -7,23 +7,26 @@
 -- pascal code apparently provided by Robert Migliaccio (mig@ms.uky.edu).
 -------------------------------------------------------------------------------
 
-import Control.Monad (forM_)
 import Data.Char -- 1.3
 import Prelude hiding (Word)
 import System.Environment (getArgs)
 
+import G2.Symbolic
+
 main = do
-  (n:_) <- getArgs
-  input <- getContents
-  forM_ [1..read n] $ \i ->
-    print
-      . length
-      . session initial []
-      . filter (not.null)
-      . map (words . trim)
-      . take (i `mod` 20)
-      . lines
-      $ input
+  n <- mkSymbolic 
+  input <- mkSymbolic
+  symFun <- mkSymbolic
+  print
+    . length
+    . session symFun initial []
+    . filter (not.null)
+    . map (words . trim)
+    . take (n `mod` 20)
+    . lines
+    $ input
+
+main2 symFun = session symFun initial [] 
 
 trim  :: String -> String                     -- strip punctuation characters
 trim   = foldr cons "" . dropWhile (`elem` punct)
@@ -33,18 +36,18 @@ trim   = foldr cons "" . dropWhile (`elem` punct)
 
 -- Read a line at a time, and produce some kind of response -------------------
 
-session               :: State -> Words -> [Words] -> String
-session rs prev []     = []
-session rs prev (l:ls) = response ++ "\n\n" ++ session rs' l ls
+session               :: (State -> String) -> State -> Words -> [Words] -> String
+session f rs prev []     = []
+session f rs prev (l:ls) = response ++ "\n\n" ++ session f rs' l ls
                          where (response, rs') | prev == l = repeated rs
-                                               | otherwise = answer rs l
+                                               | otherwise = answer f rs l
 
-answer                :: State -> Words -> (String, State)
-answer st l            = (response, newKeyTab kt st)
+answer                :: (State -> String) -> State -> Words -> (String, State)
+answer f st l            = (response, newKeyTab kt st)
  where (response, kt)         = ans (keyTabOf st)
        e `cons` (r, es)       = (r, e:es)
        ans (e:es) | null rs   = e `cons` ans es
-                  | otherwise = (makeResponse a (head rs), (key,as):es)
+                  | otherwise = (makeResponse (f st) (head rs), (key,as):es)
                          where rs           = replies key l
                                (key,(a:as)) = e
 

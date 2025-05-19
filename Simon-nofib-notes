@@ -71,9 +71,12 @@ boyer
 
 calendar
 ~~~~~~~~
-G2: evalVar: bad input.Id (Name "ioError" (Just "GHC.IO.Exception") 8214565720323784736 Nothing) (TyForAll (Id (Name "a" Nothing 6989586621679017623 Nothing) TYPE) (TyFun (TyCon (Name "IOError" (Just "GHC.IO.Exception") 8214565720323784852 Nothing) TYPE) (TyApp (TyCon (Name "IO" (Just "GHC.Types") 8214565720323797324 Nothing) (TyFun TYPE TYPE)) (TyVar (Id (Name "a" Nothing 6989586621679017623 Nothing) TYPE)))))
-CallStack (from HasCallStack):
-  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+Changed main function such that it doesn't return an IO.
+Difficult function to declare a symbolic function since there's no branching further in the program except at the begining.
+
+cichelli
+~~~~~~~~
+Module not loaded error
 
 clausify
 ~~~~~~~~
@@ -87,4 +90,59 @@ I don;t see it's generating any symbolic function instantiation
 ((coerce (main :: (IO ()))) :: (State# RealWorld) -> (((((#,#) LiftedRep) LiftedRep) (State# RealWorld)) ())) (State# RealWorld) = error	| generated: "  "
 ((coerce (main :: (IO ()))) :: (State# RealWorld) -> (((((#,#) LiftedRep) LiftedRep) (State# RealWorld)) ())) (State# RealWorld) = error	| generated: " "
 ((coerce (main :: (IO ()))) :: (State# RealWorld) -> (((((#,#) LiftedRep) LiftedRep) (State# RealWorld)) ())) (State# RealWorld) = error	| generated: []
+
+eliza
+~~~~~
+Working
+
+exact-reals
+~~~~~~~~~~~
+G2: evalVar: bad input.Id (Name "$fRealFracRatio" (Just "GHC.Real") 8214565720323789203 Nothing) (TyForAll (Id (Name "a" Nothing 6989586621679016840 Nothing) TYPE) (TyFun (TyApp (TyCon (Name "Integral" (Just "GHC.Real") 8214565720323800771 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyVar (Id (Name "a" Nothing 6989586621679016840 Nothing) TYPE))) (TyApp (TyCon (Name "RealFrac" (Just "GHC.Real") 8214565720323800784 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyApp (TyCon (Name "Ratio" (Just "GHC.Real") 8214565720323800779 Nothing) (TyFun TYPE TYPE)) (TyVar (Id (Name "a" Nothing 6989586621679016840 Nothing) TYPE))))))
+CallStack (from HasCallStack):
+  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+
+expert
+~~~~~~
+Not interesting right now
+
+fibheaps
+~~~~~~~~
+G2: evalVar: bad input.Id (Name "newArray" (Just "Data.Array.Base") 8214565720323785191 Nothing) (TyForAll (Id (Name "a" Nothing 6989586621679016905 Nothing) (TyFun TYPE (TyFun TYPE TYPE))) (TyForAll (Id (Name "e" Nothing 6989586621679016906 Nothing) TYPE) (TyForAll (Id (Name "m" Nothing 6989586621679016907 Nothing) (TyFun TYPE TYPE)) (TyFun (TyApp (TyApp (TyApp (TyCon (Name "MArray" (Just "Data.Array.Base") 8214565720323785189 Nothing) (TyFun (TyFun TYPE (TyFun TYPE TYPE)) (TyFun TYPE (TyFun (TyFun TYPE TYPE) (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))))) (TyVar (Id (Name "a" Nothing 6989586621679016905 Nothing) (TyFun TYPE (TyFun TYPE TYPE))))) (TyVar (Id (Name "e" Nothing 6989586621679016906 Nothing) TYPE))) (TyVar (Id (Name "m" Nothing 6989586621679016907 Nothing) (TyFun TYPE TYPE)))) (TyForAll (Id (Name "i" Nothing 6989586621679017254 Nothing) TYPE) (TyFun (TyApp (TyCon (Name "Ix" (Just "GHC.Ix") 8214565720323972598 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679017254 Nothing) TYPE))) (TyFun (TyApp (TyApp (TyCon (Name "(,)" (Just "GHC.Tuple") 0 Nothing) (TyFun TYPE (TyFun TYPE TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679017254 Nothing) TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679017254 Nothing) TYPE))) (TyFun (TyVar (Id (Name "e" Nothing 6989586621679016906 Nothing) TYPE)) (TyApp (TyVar (Id (Name "m" Nothing 6989586621679016907 Nothing) (TyFun TYPE TYPE))) (TyApp (TyApp (TyVar (Id (Name "a" Nothing 6989586621679016905 Nothing) (TyFun TYPE (TyFun TYPE TYPE)))) (TyVar (Id (Name "i" Nothing 6989586621679017254 Nothing) TYPE))) (TyVar (Id (Name "e" Nothing 6989586621679016906 Nothing) TYPE))))))))))))
+CallStack (from HasCallStack):
+  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+
+fish
+~~~~
+Not producing any result in atleast 2 minutes of run. Does not contain symbolic function yet
+
+gcd
+~~~
+Come back again to check how to make use of arguments
+
+hartel
+~~~~~~
+Quite big right now
+
+integer
+~~~~~~~
+Not generating intresting outputs
+
+lambda
+~~~~~~
+Does not contain symbolic function yet
+G2: evalVar: bad input.Id (Name "runIdentity" (Just "Data.Functor.Identity") 8214565720323788264 Nothing) (TyForAll (Id (Name "a" Nothing 6989586621679018351 Nothing) TYPE) (TyFun (TyApp (TyCon (Name "Identity" (Just "Data.Functor.Identity") 8214565720323788255 Nothing) (TyFun TYPE TYPE)) (TyVar (Id (Name "a" Nothing 6989586621679018351 Nothing) TYPE))) (TyVar (Id (Name "a" Nothing 6989586621679018351 Nothing) TYPE))))
+CallStack (from HasCallStack):
+  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+
+last-piece
+~~~~~~~~~~
+Does not take any input yet
+
+lcss
+~~~~
+Not generating intresting outputs
+
+life
+~~~~
+
 

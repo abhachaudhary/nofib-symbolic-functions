@@ -18,9 +18,10 @@ import Table
 import Knowledge
 import Match
 import Search
-import System.IO
+--import System.IO
 import System.Environment
-import Control.Monad (forM_)
+
+import G2.Symbolic
 
 -- The `main' function reads in the data file before interacting with user.
 -- The `process' function takes the contents of the file and the input from the
@@ -32,15 +33,18 @@ import Control.Monad (forM_)
 -- information table which contains question-and-answer pairs.
 
 main = do
-   (n:_) <- getArgs
-   animals <- readFile "runtime_files/animals"
+   n <- mkSymbolic
+   --animals <- readFile "runtime_files/animals"
+   animals <- mkSymbolic
    contents <- getContents
-   forM_ [1..read n] $ \i ->
-      print
-         . length
-         . process animals
-         . take (i + 9999)
-         $ contents
+   symFun <- mkSymbolic
+   print
+      . length
+      . process symFun animals
+      . take (n + 9999)
+      $ contents
+
+main2 symFun content input = process symFun content input
 
 {- OLD 1.2:
 main rs =
@@ -62,7 +66,7 @@ getData filename rs =
       Str contents -> interact (process contents) rrs
 -}
 
-process contents input =
+process f contents input =
    "Solving: " ++ showPhrase problem ++ "\n" ++
    display results (vars problem) replies
    where
@@ -72,7 +76,7 @@ process contents input =
    replies = [words l /= ["no"] | l <- lines input]
    db = (defs,info)
    newsoln = Soln newTable ['X' : show n | n<-[0..]]
-   results = strip [] (solve db newsoln problem)
+   results = strip [] (solve f db newsoln problem)
 
 -- The `strip' function takes the list of questions and solutions from the main
 -- call to `solve' and removes all but the first occurrence of each question,
