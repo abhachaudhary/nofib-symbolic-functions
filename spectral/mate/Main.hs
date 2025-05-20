@@ -1,10 +1,10 @@
-module Main(main) where
+module Main2 (main) where
 import Board
 import Solution
 import Problem
 import System.Environment( getArgs )
 
-main = do { files <- getArgs ;
+{-main = do { files <- getArgs ;
 	    mapM mateInN files }
 
 mateInN file
@@ -19,5 +19,15 @@ mateInN file
 				solve bd c n
 
 	 } ;
-	 putStr result  }
+	 putStr result  }-}
+
+main input = 
+	let
+		(bd, (c,n)) = readProblem input
+		result = showBoard bd ++
+			"\n" ++
+			show c ++ " to move and mate in " ++ show n ++ "\n" ++
+			"\n" ++
+			solve bd c n
+	in result
 

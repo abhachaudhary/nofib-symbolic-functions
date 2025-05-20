@@ -1,5 +1,5 @@
 -- !!! Brute force soln to a puzzle. Sent to us by Stephen Eldridge
-module Main(main) where
+module Main2 where
 
 import Control.Monad (replicateM_)
 import System.Environment (getArgs)
@@ -162,7 +162,7 @@ transfer source dest location countdown history
                       let newTime = countdown + u2times i]
 
 
-main :: IO ( )
+{-main :: IO ( )
 main = do
   [n] <- getArgs
   replicateM_ (read n) $ do
@@ -172,4 +172,14 @@ main = do
           | otherwise        = error "puzzle expects exactly one argument"
     let solutions = transfer initialState finalState RightBank time [ ]
     let mins = minSolutions solutions
-    foldr seq () (writeSolutions mins 1 "") `seq` return ()
+    foldr seq () (writeSolutions mins 1 "") `seq` return ()-}
+
+main args =
+  let
+    time
+      | length args == 1 = 0
+      | otherwise        = error "puzzle expects exactly one argument"
+    solutions = transfer initialState finalState RightBank time [ ]
+    mins = minSolutions solutions
+  in 
+    foldr seq () (writeSolutions mins 1 "")

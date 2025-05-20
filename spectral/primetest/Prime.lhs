@@ -27,12 +27,12 @@ depleted sequence of random numbers. When the @Bool@ is @True@ the
 number is prime with probability $1 - 4^{-@k@}$; the number is
 definitely composite when the @Bool@ is @False@.
 
-> multiTest :: Int -> [Int] -> Integer -> (Bool, [Int])
-> multiTest k rs n
+> multiTest :: (Integer -> Integer -> Bool) -> Int -> [Int] -> Integer -> (Bool, [Int])
+> multiTest f k rs n
 >  = if n <= 1 || even n then (n==2, rs) else mTest k rs
 >    where mTest 0 rs = (True, rs)
 >          mTest k rs = if t then mTest (k-1) rs' else (False, rs')
->                           where (t, rs') = singleTest n (findKQ n) rs
+>                           where (t, rs') = singleTest f n (findKQ n) rs
 
 The function @findKQ@ takes an odd integer $n$ and returns the tuple
 $(k,q)$ such that $n = q2^k+1$.
@@ -45,21 +45,22 @@ $(k,q)$ such that $n = q2^k+1$.
 The function @singleTest@ takes an odd, positive, @Integer@ @n@ and a
 pair of @Integer@'s derived from @n@ by the @findKQ@ function
 
-> singleTest :: Integer -> (Integer, Integer) -> [Int] -> (Bool, [Int])
-> singleTest n kq rs
->  = (singleTestX n kq (2+x), rs')
+> singleTest :: (Integer -> Integer -> Bool) -> Integer -> (Integer, Integer) -> [Int] -> (Bool, [Int])
+> singleTest f n kq rs
+>  = (singleTestX f n kq (2+x), rs')
 >    where (x, rs')       = random (n-2) rs
 
 Given a value @x@ we can test whether we have a witness to @n@'s
 compositeness using @singleTestX@.
 
-> singleTestX n (k, q) x
->  = t == 1 || t == n-1 || witness ts
+> singleTestX f n (k, q) x
+>  = t == 1 || t == n-1 || witness f ts
 >    where (t:ts)         = take (fromInteger k) (iterate square (powerMod x q n))
->          witness []     = False
->          witness (t:ts) = if t == n-1 then True       else
->                           if t == 1   then False      else
->                                            witness ts
+>          witness f []     = False
+> -- SYMFUN: The following line makes use of symbolic function
+>          witness f (t:ts) = if f t (n-1) then True       else
+>                           if f t 1   then False      else
+>                                            witness f ts
 >          square x       = (x*x) `mod` n
 
 The @random@ function takes a number @n@ and a list of pseudo-random

@@ -4,7 +4,7 @@
 	JFP 9(3) May 1999
 -}
 
-module Main where
+module Main2 where
 
 import System.IO
 import Data.Ratio
@@ -19,7 +19,7 @@ default (Integer, Rational, Double)
 rnfListOfRational :: [Rational] -> ()
 rnfListOfRational = foldr (\a b -> a `seq` b) ()
 
-main = replicateM_ 200 $ do {
+{-main = replicateM_ 200 $ do {
 		(n:_) <- getArgs ;
 	    let { p = read n :: Int } ;
 	    let { salt = fromIntegral (min 0 p) } ;
@@ -28,7 +28,19 @@ main = replicateM_ 200 $ do {
 	    rnf (extract p (sinx/cosx - revert (integral (1/(1+x^(2+salt)))))) `seq` return ();
 	    rnf (extract p ts) `seq` return ();
 	    rnf (extract p tree) `seq` return ();
-	  }
+	  }-}
+
+main p = 
+	let 
+		salt = fromIntegral (min 0 p)
+		rnf = rnfListOfRational
+		rnf1 = rnf (extract p (sinx - sqrt (1-cosx^(2+salt))))
+		rnf2 = rnf (extract p (sinx/cosx - revert (integral (1/(1+x^(2+salt))))))
+		rnf3 = rnf (extract p ts)
+		rnf4 = rnf (extract p tree)
+	in
+		(rnf1, rnf2, rnf3, rnf4)
+
 
 
 -- From Section 6

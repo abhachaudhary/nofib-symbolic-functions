@@ -1,4 +1,4 @@
-module Problem(readProblem) where
+module Problem (readProblem) where
 
 import Data.Char(isUpper,toLower)
 import Board

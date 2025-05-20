@@ -1,4 +1,4 @@
-module Prog(prog) where
+module Spectral.Minimax.Prog (prog) where
 
 import Board
 import Wins
@@ -13,8 +13,8 @@ prog input =
 	where
 	board "doesn't happen" = testBoard ++ testBoard
 	board _                = testBoard
-	game = alternate X max' min' (board input)
+	game = alternate X max' min' (testBoard (stringToPiece input))
 
 
-testBoard = [[Empty,O,Empty],[Empty,X,Empty],[Empty,Empty,Empty]]
+testBoard n = [[Empty,O,n],[Empty,X,Empty],[Empty,Empty,Empty]]
 

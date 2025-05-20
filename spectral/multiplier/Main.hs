@@ -88,18 +88,20 @@ inputs.
 
 -------------------------------------------------------------------
 
-module Main where
+module Main2 where
 
 import System.Environment
 
-main = do
+{-main = do
   (n:_) <- getArgs
-  putStr (go (read n :: Int))
+  putStr (go (read n :: Int))-}
+
+main g n = go g n
 
 -------------------------------------------------------------------
 -- Definition of the output and the simulation parameters
 
-go wordsize =
+go h wordsize =
   let
     limit = 2000	-- how many clock cycles to run
     verbose = True	-- want lots of output?
@@ -108,7 +110,7 @@ go wordsize =
       [(2+3*i, 11+2*i) | i <- [1..]]
   in
     "Binary multiplier circuit simulation\n"
-    ++ (if verbose then traceMult width else runMult)
+    ++ (if verbose then traceMult h width else runMult h)
          wordsize limit xs
 
 -------------------------------------------------------------------
@@ -117,14 +119,14 @@ go wordsize =
 -- 'traceMult' gives full trace information.  Use it to see how
 -- the multiplier works.
 
-traceMult :: Int -> Int -> Int -> [(Int,Int)] -> String
-traceMult width wordsize limit xs =
+traceMult :: (((Int, Int) -> Int) -> [(Int, Int)] -> [Int]) -> Int -> Int -> Int -> [(Int,Int)] -> String
+traceMult h width wordsize limit xs =
   format limit
     [fmtInt 5 [0..], fmtStr ". ",
      fmtB start, fmtW width as, fmtW width bs, fmtStr "  ==> ",
      fmtB ready, fmtW width ra, fmtW width rb, fmtW width prod,
      fmtStr "\n"]
-  where (as,bs,ready,ra,rb,prod) = multsys wordsize xs
+  where (as,bs,ready,ra,rb,prod) = multsys h wordsize xs
         start = ready
 
 -- 'runMult' runs the simulation for "limit" cycles and just prints
@@ -133,9 +135,9 @@ traceMult width wordsize limit xs =
 -- to format the output.  ??? This needs some work -- I'm not sure
 -- that all the simulation work is actually performed!
 
-runMult :: Int -> Int -> [(Int,Int)] -> String
-runMult wordsize limit xs = show dummy ++ "\n"
-  where (as,bs,ready,ra,rb,prod) = multsys wordsize xs
+runMult :: (((Int, Int) -> Int) -> [(Int, Int)] -> [Int]) -> Int -> Int -> [(Int,Int)] -> String
+runMult h wordsize limit xs = show dummy ++ "\n"
+  where (as,bs,ready,ra,rb,prod) = multsys h wordsize xs
         dummy = (sum (take limit ready)) :: Int
 
 -------------------------------------------------------------------
@@ -145,12 +147,14 @@ runMult wordsize limit xs = show dummy ++ "\n"
 -- 'ready' output and sets the inputs.  This interface also handles
 -- conversions between integers and words.
 
-multsys :: Int -> [(Int,Int)] -> (W,W,B,W,W,W)
-multsys wordsize xs = (as,bs,ready,ra,rb,prod)
-  where (ready, ra, rb,  prod) = multiplier wordsize start as bs
+multsys ::(((Int, Int) -> Int) -> [(Int, Int)] -> [Int]) -> Int -> [(Int,Int)] -> (W,W,B,W,W,W)
+multsys h wordsize xs = (as,bs,ready,ra,rb,prod)
+  where (ready, ra, rb,  prod) = if as' /= bs' then multiplier wordsize start as' bs' else multiplier wordsize start as bs
         start = ready
-        as  = f (map fst xs)
-        bs  = f (map snd xs)
+        as'  = f (h fst xs)
+        bs'  = f (h snd xs)
+        as = f (map fst xs)
+        bs = f (map snd xs)
         f :: [Int] -> W
         f as = ntrans wordsize (map (ibits wordsize) (g start as))
         g :: B -> [Int] -> [Int]

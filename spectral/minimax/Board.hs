@@ -19,6 +19,11 @@ showPiece X = "X"
 showPiece O = "O"
 showPiece Empty = " "
 
+stringToPiece :: String -> Piece
+stringToPiece "X" = X
+stringToPiece "O" = O
+stringToPiece _ = Empty
+
 placePiece :: Piece -> Board -> (Int,Int) -> [Board]
 placePiece p board pos | not (empty pos board) = []
 placePiece p [r1,r2,r3] (1,x) = [[insert p r1 x,r2,r3]]

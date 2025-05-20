@@ -11,12 +11,10 @@ of this.  You should also be able to find many opportunities for
 optimisation here.
 -}
 
-module Main (main) where
+module Main2 (main) where
 
 import Control.Monad
 import System.Environment
-
-import G2.Symbolic
 
 algb :: (Eq a) => [a] -> [a] -> [Int]
 algb xs ys
@@ -31,15 +29,18 @@ algb xs ys
 	  = let kjcurr = if x == y then k0j1+1 else max k1j1 k0j
 	    in (y,kjcurr) : algb2 k0j kjcurr ys
 
-algc :: (Eq a) => Int -> Int -> [a] -> [a] -> [a] -> [a]
-algc m n xs []  = id
-algc m n [x] ys = if x `elem` ys then (x:) else id
-algc m n xs ys
-  = algc m2 k xs1 (take k ys) . algc (m-m2) (n-k) xs2 (drop k ys)
+algc :: (Eq a) => (Int -> [a] -> [a]) -> Int -> Int -> [a] -> [a] -> [a] -> [a]
+algc f m n xs []  = id
+algc f m n [x] ys = if x `elem` ys then (x:) else id
+algc f m n xs ys
+-- SYMFUN: The following line makes use of symbolic function
+-- Here, 'take' is replaced with a symbolic function 'f'. This change
+-- makes further calls of 'algc' function to be dependent on instantiation of function 'f'
+  = algc f m2 k xs1 (f k ys) . algc f (m-m2) (n-k) xs2 (drop k ys)
   where
     m2 = m `div` 2
-
-    xs1 = take m2 xs
+-- SYMFUN: The following line makes use of symbolic function
+    xs1 = f m2 xs
     xs2 = drop m2 xs
 
     l1 = algb xs1 ys
@@ -52,10 +53,10 @@ algc m n xs ys
       | x+y >= m  = findk (k+1) k  (x+y) xys
       | otherwise = findk (k+1) km m     xys
 
-lcss :: (Eq a) => [a] -> [a] -> [a]
-lcss xs ys = algc (length xs) (length ys) xs ys []
+lcss :: (Eq a) => (Int -> [a] -> [a]) -> [a] -> [a] -> [a]
+lcss f xs ys = algc f (length xs) (length ys) xs ys []
 
-main = do
+{-main = do
   a <- mkSymbolic
   b <- mkSymbolic
   c <- mkSymbolic
@@ -68,4 +69,7 @@ main = do
   let d' = read d :: Int
   let e' = read e :: Int
   let f' = read f :: Int
-  print (lcss [a',b'..c'] [d',e'..f'])
+  print (lcss [a',b'..c'] [d',e'..f'])-}
+
+main :: (Int -> [Int] -> [Int]) ->  Int -> Int -> Int -> Int -> Int ->Int -> [Int]
+main symFun a b c d e f = lcss symFun [a,b..c] [d,e..f]

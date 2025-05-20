@@ -12,7 +12,7 @@ start = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],
 
 -- Calculating the next generation
 
-gen n board = map row (shift (copy n 0) board)
+gen f n board = map f (shift (copy n 0) board)
 
 row (last,this,next)
   = zipWith3 elt (shift 0 last) (shift 0 this) (shift 0 next)
@@ -49,9 +49,12 @@ limit (x:y:xs) | x==y      = [x]
 -- display all the generations, we just display the number of generations
 -- it takes to reach a fixpoint, plus the last generations.
 
-main = do
+{-main = do
   sz <- mkSymbolic
   let generations =
         (map disp . zip (map show [0..]) . limit . iterate (gen sz))
         (take sz (map (take sz . (++ (copy sz 0))) start ++ copy sz (copy sz 0)))
-  print (length (last generations))
+  print (length (last generations))-}
+
+main2 symFun sz = let generations = (map disp . zip (map show [0..]) . limit . iterate (gen symFun sz)) (take sz (map (take sz . (++ (copy sz 0))) start ++ copy sz (copy sz 0)))
+  in length (last generations)

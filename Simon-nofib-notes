@@ -140,9 +140,52 @@ Does not take any input yet
 
 lcss
 ~~~~
-Not generating intresting outputs
+Can't find intresting symbolic function
 
 life
 ~~~~
+
+Not interesting right now
+
+mandel
+~~~~~~
+{-# SPECIALISE phase :: Complex Double -> Double #-}
+    |                ^^^^^
+G2: /Users/abhachaudhary/.g2/base-4.9.1.0/Data/Complex.hs:109:16: error:
+    Not in scope: `phase'
+
+mandel2
+~~~~~~~
+It isn't doing anything with the input
+
+minimax
+~~~~~~~
+Module not found error
+
+multiplier
+~~~~~~~~~~
+Big program with no branching, not producing any output right now
+
+power
+~~~~~
+
+G2: evalVar: bad input.Id (Name "$fFractionalRatio" (Just "GHC.Real") 8214565720323786135 Nothing) (TyForAll (Id (Name "a" Nothing 6989586621679016094 Nothing) TYPE) (TyFun (TyApp (TyCon (Name "Integral" (Just "GHC.Real") 8214565720323797181 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyVar (Id (Name "a" Nothing 6989586621679016094 Nothing) TYPE))) (TyApp (TyCon (Name "Fractional" (Just "GHC.Real") 8214565720323797177 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyApp (TyCon (Name "Ratio" (Just "GHC.Real") 8214565720323797189 Nothing) (TyFun TYPE TYPE)) (TyVar (Id (Name "a" Nothing 6989586621679016094 Nothing) TYPE))))))
+CallStack (from HasCallStack):
+  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+
+pretty
+~~~~~~
+Doesn't use any input
+
+primetest
+~~~~~~~~~
+Not generating non const function
+
+puzzle
+~~~~~~
+
+
+rewrite
+~~~~~~~
 
 

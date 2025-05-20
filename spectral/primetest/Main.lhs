@@ -43,7 +43,7 @@ Manchester M13 9PL, UK.}
 
 \section{Command Interpreter}
 
-> module Main where
+> module Main2 where
 > import IntLib
 > import MyRandom
 > import Prime
@@ -51,29 +51,31 @@ Manchester M13 9PL, UK.}
 Let's begin by giving Lester's line based command intepreter for
 programs with @state@.
 
-> main :: IO ()
-> main = getContents >>= \ cts -> mapM_ putStr (process (lines cts))
+> --main :: IO ()
+> --main = getContents >>= \ cts -> mapM_ putStr (process (lines cts))
+
+> main symFun input = process symFun input 
 
 The @process@ function takes a list of input lines and produces a list
 of output lines.
 
-> process :: [String] -> [String]
-> process = doInput initState
+> process :: (Integer -> Integer -> Bool) -> [String] -> [String]
+> process f = doInput f initState
 
 To do this we consider each input line in turn in @doInput@; this
 passes along the @state@.
 
-> doInput :: State -> [String] -> [String]
-> doInput state []     = []
-> doInput state (l:ls) = doLine l (\state -> doInput state ls) state
+> doInput :: (Integer -> Integer -> Bool) -> State -> [String] -> [String]
+> doInput f state []     = []
+> doInput f state (l:ls) = doLine f l (\state -> doInput f state ls) state
 
 The @doLine@ function processes an individual line.
 
-> doLine :: String -> (State -> [String]) -> State -> [String]
-> doLine cs cont rs
+> doLine :: (Integer -> Integer -> Bool) -> String -> (State -> [String]) -> State -> [String]
+> doLine f cs cont rs
 >  = if t then "Probably prime": rest else "Composite": rest
 >    where n        = readInteger cs
->          (t, rs') = multiTest 100 rs n
+>          (t, rs') = multiTest f 100 rs n
 >          rest     = cont rs'
 
 And, for the particular problem we have in mind, we make the following

@@ -1,4 +1,4 @@
-module Main where
+module Main2 where
 
 import Mandel
 import PortablePixmap
@@ -24,10 +24,12 @@ instance NFData Integer where
 instance NFData PixMap where
   rnf (Pixmap a b c d) = rnf a `seq` rnf b `seq` rnf c `seq` rnf d
 
-main = replicateM_ 100 $ do
+{-main = replicateM_ 100 $ do
   hSetBinaryMode stdout True
   [minx,miny,maxx,maxy,_,_,_]     <- map read <$> getArgs
   [_,_,_,_,screenX,screenY,limit] <- map read <$> getArgs
   [_,_,_,_,_,_,limit]             <- map read <$> getArgs
   -- print (mandelset minx miny maxx maxy screenX screenY limit)
-  rnf (mandelset minx miny maxx maxy screenX screenY limit) `seq` return ()
+  rnf (mandelset minx miny maxx maxy screenX screenY limit) `seq` return ()-}
+
+main minx miny maxx maxy screenX screenY limit = mandelset minx miny maxx maxy screenX screenY limit
