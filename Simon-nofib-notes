@@ -66,6 +66,9 @@ Same for this one.
 
 banner
 ~~~~~~
+G2: evalVar: bad input.Id (Name "transpose" (Just "Data.OldList") 8214565720323784830 Nothing) (TyForAll (Id (Name "a" Nothing 6989586621679014725 Nothing) TYPE) (TyFun (TyApp (TyCon (Name "[]" (Just "GHC.Types") 0 Nothing) (TyFun TYPE TYPE)) (TyApp (TyCon (Name "[]" (Just "GHC.Types") 0 Nothing) (TyFun TYPE TYPE)) (TyVar (Id (Name "a" Nothing 6989586621679014725 Nothing) TYPE)))) (TyApp (TyCon (Name "[]" (Just "GHC.Types") 0 Nothing) (TyFun TYPE TYPE)) (TyApp (TyCon (Name "[]" (Just "GHC.Types") 0 Nothing) (TyFun TYPE TYPE)) (TyVar (Id (Name "a" Nothing 6989586621679014725 Nothing) TYPE))))))
+CallStack (from HasCallStack):
+  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
 
 boyer
 ~~~~~
@@ -150,6 +153,7 @@ CallStack (from HasCallStack):
 fish
 ~~~~
 Not producing any result in atleast 2 minutes of run. Does not contain symbolic function yet
+G2: unmatched expr[Lam TypeL (Id (Name "e" Nothing 6989586621679155457 (Just (Span {start = Loc {line = 136, col = 10, file = "/Users/abhachaudhary/.g2/base-4.9.1.0/Data/Either.hs"}, end = Loc {line = 136, col = 26, file = "/Users/abhachaudhary/.g2/base-4.9.1.0/Data/Either.hs"}}))) TYPE) (App (App (App (App (App (Data (DataCon {dc_name = Name "C:Monad" (Just "GHC.Base") 8214565720323794558 (Just (Span {start = Loc {line = 250, col = 1, file = "/Users/abhachaudhary/.g2/base-4.9.1.0/GHC/BaseMonad.hs"}, end = Loc {line = 264, col = 23, file = "/Users/abhachaudhary/.g2/base-4.9.1.0/GHC/BaseMonad.hs"}})), dc_type = TyForAll (Id (Name "m" Nothing 7566047373982538900 Nothing) (TyFun TYPE TYPE)) (TyFun (TyApp (TyCon (Name "Applicative" (Just "GHC.Base") 3602879701896396834 Nothing) (TyFun (TyFun TYPE TYPE) (TyCon (Name "Constraint" (Just "GHC.Types") 
 
 gcd
 ~~~
@@ -192,7 +196,7 @@ G2: /Users/abhachaudhary/.g2/base-4.9.1.0/Data/Complex.hs:109:16: error:
 
 mandel2
 ~~~~~~~
-It isn't doing anything with the input
+G2: unmatched expr[Lam TypeL (Id (Name "e" Nothing 6989586621679022239 (Just (Span {start = Loc {line = 136, col = 10, file = "/Users/abhachaudhary/.g2/base-4.9.1.0/Data/Either.hs"}, end = Loc {line = 136, col = 26, file = "/Users/abhachaudhary/.g2/base-4.9.1.0/Data/Either.hs"}}))) TYPE) (App (App (App (App (App (Data (DataCon {dc_name = Name "C:Monad" (Just "GHC.Base") 8214565720323794454 (Just (Span {start = Loc {line = 250, col = 1, file = "/Users/abhachaudhary/.g2/base-4.9.1.0/GHC/BaseMonad.hs"}, end = Loc {line = 264, col = 23, file = "/Users/abhachaudhary/.g2/base-4.9.1.0/GHC/BaseMonad.hs"}})), dc_type = TyForAll (Id (Name "m" Nothing 7566047373982444978 Nothing) (TyFun TYPE TYPE)) (TyFun (TyApp (TyCon (Name "Applicative" (Just "GHC.Base") 3602879701896396834 Nothing) (TyFun (TyFun TYPE TYPE) (TyCon (Name "Constraint" (Just "GHC.Types")
 
 minimax
 ~~~~~~~

@@ -4,6 +4,8 @@
 -- of Bird and Wadler's ``Introduction to functional programming'', with
 -- two ways of printing the calendar ... as in B+W, or like UNIX `cal':
 
+module Main2 (main) where
+
 import System.IO
 import Data.List
 import Prelude hiding (null, length, or, foldr, maximum, concat, concatMap, foldl, foldr1, foldl1, sum, all, elem)
@@ -115,7 +117,7 @@ cal year = unlines (banner year `above` body year)
       symFun <- mkSymbolic
       calFor year n-}
 
-main2 year n symFun = calFor year n symFun
+main year n symFun = calFor year n symFun
 
 calFor year i f | illFormed = -1 -- -1 represents error "Bad argument"
               | otherwise = length (cal yr)

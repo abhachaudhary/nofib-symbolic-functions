@@ -32,6 +32,7 @@ The Circuit Simulator example
 David J. King & John O'Donnell
 January, 1998
 
+> module Main2 (main) where
 > import System.Environment
 > import Control.Monad (forM_)
 > import Data.List
@@ -662,8 +663,8 @@ To run (with ghc) for a (8 bit register) circuit over 1000 cycles
 > --  (num_bits:num_cycles:_) <- getArgs
 > --  print (run (read num_bits) (read num_cycles))
 
-> main2 :: (Int -> Int) -> Int -> Int -> [[Boolean]]
-> main2 symFun num_bits num_cycles = run symFun num_bits num_cycles
+> main :: (Int -> Int) -> Int -> Int -> [[Boolean]]
+> main symFun num_bits num_cycles = run symFun num_bits num_cycles
 
 
 > run :: (Int -> Int) -> Int -> Int -> [[Boolean]]

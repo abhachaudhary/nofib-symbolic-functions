@@ -1,6 +1,8 @@
 -- The Game of Life
 -- (from John Launchbury)
 
+module Main2 (main) where
+
 import Control.Monad
 import System.Environment
 
@@ -56,5 +58,7 @@ limit (x:y:xs) | x==y      = [x]
         (take sz (map (take sz . (++ (copy sz 0))) start ++ copy sz (copy sz 0)))
   print (length (last generations))-}
 
-main2 symFun sz = let generations = (map disp . zip (map show [0..]) . limit . iterate (gen symFun sz)) (take sz (map (take sz . (++ (copy sz 0))) start ++ copy sz (copy sz 0)))
+main symFun sz = 
+  let 
+    generations = (map disp . zip (map show [0..]) . limit . iterate (gen symFun sz)) (take sz (map (take sz . (++ (copy sz 0))) start ++ copy sz (copy sz 0)))
   in length (last generations)

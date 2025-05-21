@@ -109,6 +109,8 @@ mechvel@botik.ru
 
 -- Haskell ---------------------------------------------------------
 
+module Main2 (main) where
+
 import System.Environment (getArgs)
 import G2.Symbolic
 
@@ -120,7 +122,7 @@ import G2.Symbolic
 --       expand n i n e t y
 --   putStr $ shows (filter condition $ permutations p0) "\n"
 
-main2 symFun n = 
+main symFun n = 
   let
     p0 = take 10 [0..9+n]
     condition [t,h,i,r,y,w,e,l,v,n] =

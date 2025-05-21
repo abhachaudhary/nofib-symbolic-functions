@@ -14,6 +14,8 @@ Sergey Mechveliani
 mechvel@botik.ru
 -}
 
+module Main2 (main) where
+
 import System.Environment
 
 import G2.Symbolic
@@ -22,10 +24,7 @@ import G2.Symbolic
              -- choose d from [100..9000] and switch Z = Int,Integer
 type Z = Integer
 
-main =  do
-        arg <- mkSymbolic
-        symFun1 <- mkSymbolic
-        symFun2 <- mkSymbolic
+main arg symFun1 symFun2 =
 	-- compute  extendedGCD x y = (g,u,v)
         -- for many  x,y  and find  maximum [abs (g+u+v)]
         let
@@ -45,7 +44,7 @@ main =  do
 
           -- boo = all test tripls    -- this tests gcdE
 	--
-        putStr (shows (max' rs) "\n")
+        in max' rs
 
 
 test (x,y,(d,u,v)) =  d==(u*x+v*y)  &&  d==(gcd x y)
