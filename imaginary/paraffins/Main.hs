@@ -5,7 +5,7 @@
  - Original author: Steve Heller
  -}
 
-module Main (main) where
+module Main2 (main) where
 import GHC.Arr
 import System.Environment
 import Control.Monad (replicateM_)
@@ -86,11 +86,9 @@ paraffins_until f n =
  where
   radicals = radical_generator f (div n 2)
 
-main = do
-  arg <- mkSymbolic
-  symFun <- mkSymbolic
-  let num = arg
-  print [length (rads!i) | rads <- [(radical_generator symFun num)], i <- [0..num]]
-  print (bcp_until symFun num)
-  print (ccp_until symFun num)
-  print (paraffins_until symFun num)
+main arg symFun =
+  let num = arg in
+  ( [length (rads!i) | rads <- [(radical_generator symFun num)], i <- [0..num]]
+  , bcp_until symFun num
+  , ccp_until symFun num
+  , paraffins_until symFun num )

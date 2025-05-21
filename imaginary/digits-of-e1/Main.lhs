@@ -1,10 +1,8 @@
 Compute the digits of "e" using continued fractions.
 Original program due to Dale Thurston, Aug 2001
 
-> module Main where
+> module Main2 where
 > import System.Environment (getArgs)
-
-> import G2.Symbolic
 
 > type ContFrac = [Integer]
 
@@ -28,11 +26,10 @@ digit regardless of what the input is; i.e., to see if the interval
 > -- Output a digit if we can
 > ratTrans f (a,b,c,d) xs |
 >   ((signum c == signum d) || (abs c < abs d)) && -- No pole in range
->   (c+d)*q <= a+b && (c+d)*q + (c+d) > a+b       -- Next digit is determined
->      = q:ratTrans f (c,d,a-q*c,b-q*d) xs
-> --  where q = b `div` d
 > -- SYMFUN: The following line makes use of symbolic function
->   where q = f b d
+>   f (c+d) q <= f a b && (c+d)*q + (c+d) > a+b       -- Next digit is determined
+>      = q:ratTrans f (c,d,a-q*c,b-q*d) xs
+>   where q = b `div` d
 > ratTrans f (a,b,c,d) (x:xs) = ratTrans f (b,a+x*b,d,c+x*d) xs
 
 Finally, we convert a continued fraction to digits by repeatedly multiplying by 10.
@@ -51,7 +48,4 @@ Finally, we convert a continued fraction to digits by repeatedly multiplying by 
 > --	digits <- mkSymbolic
 > --	print (hash (show (e (digits))))
 
-> main = do
->  symFun <- mkSymbolic
->  digits <- mkSymbolic
->  print (e' symFun digits)
+> main symFun digits = e' symFun digits

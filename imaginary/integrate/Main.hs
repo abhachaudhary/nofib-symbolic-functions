@@ -1,8 +1,7 @@
-module Main (integrate1D, main) where
+module Main2 (integrate1D, main) where
 
 import System.Environment
 
-import G2.Symbolic
 
 integrate1D :: Double -> Double -> (Double->Double) -> Double
 integrate1D l u f =
@@ -41,10 +40,4 @@ es g = map (^2) (zipWith (-) (rtotals g) itotals)
 etotal' g n = sum (take n (es g))
 
 -- The (analytical) result should be zero
-main = do
-  with_output <- return False
-  range <- mkSymbolic
-  symFun <- mkSymbolic
-  if with_output
-    then putStrLn $ show $ etotal' symFun range
-    else seq (etotal' symFun range) (putStrLn "Exact result hidden for lack of stability.\nPass 'True' as first argument to the benchmark if you want to view the computed output for testing purposes.")
+main range symFun = etotal' symFun range

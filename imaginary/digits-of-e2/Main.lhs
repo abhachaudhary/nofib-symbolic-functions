@@ -1,11 +1,9 @@
 Compute digits of e
 Due to John Hughes, Aug 2001
 
-> module Main where
+> module Main2 where
 > import System.Environment
 > import Control.Monad
-
-> import G2.Symbolic
 
 Here's a way to compute all the digits of e. We use the series
 
@@ -38,34 +36,25 @@ larger than 10, then this is likely to happen quickly. No doubt there
 are much better ways than this of solving the problem, but this one
 works.
 
-> carryPropagate base (d:ds)
->   | carryguess == (d+9) `div` base
+> -- Matching on d1:ds@(d2:_) added to force non-constant function
+> -- for code coverage
+> carryPropagate f base (d:ds)
+>   | f carryguess == f (d `div` base)
 >       = carryguess : (remainder+nextcarry) : fraction
 >   | otherwise
 >       = (dCorrected `div` base) : (dCorrected `mod` base) : fraction
 >   where carryguess = d `div` base
 >         remainder = d `mod` base
-> 	  nextcarry:fraction = carryPropagate (base+1) ds
+> 	  nextcarry:fraction = carryPropagate f (base+1) ds
 >         dCorrected = d + nextcarry
 
-> e :: Int -> String
-> e n =
+> e :: (Int -> Int) -> Int -> String
+> e f n =
 >     take n $
 >     ("2."++) $
 >     tail . concat $
 >     map (show.head) $
->     iterate (carryPropagate 2 . map (10*) . tail) $
->     take (2*n) $ -- an upper bound on what the pipeline might consume
->     2:[1,1..]
-
-> e' :: (Int -> Int) -> Int -> String
-> e' f n =
->     take n $
->     ("2."++) $
->     tail . concat $
->     map (show.head) $
->     -- SYMFUN: The following line makes use of symbolic function
->     iterate (carryPropagate 2 . map f . tail) $
+>     iterate (carryPropagate f 2 . map (10*) . tail) $
 >     take (2*n) $ -- an upper bound on what the pipeline might consume
 >     2:[1,1..]
 
@@ -73,7 +62,4 @@ works.
 > --	digits <- mkSymbolic
 > --	print (hash (show (e (digits))))
 
-> main = do
->  symFun <- mkSymbolic
->  digits <- mkSymbolic
->  print (e' symFun digits)
+> main symFun digits = e symFun digits

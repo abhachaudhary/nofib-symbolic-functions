@@ -16,9 +16,9 @@ Haskell and here is the result using hbc.
 -}
 
 ----------------------------------------------------------
-import System.Environment
+module Main2 where
 
-import G2.Symbolic
+import System.Environment
 
 --infix 8 ^^^
 
@@ -41,13 +41,11 @@ int (S x) = 1 + int x
 x ^^^ S y = x * (x ^^^ y)-}
 
 exponent2 :: (Nat -> Nat) -> Nat -> Nat -> Nat
-exponent2 f x Z = f (S Z)
-exponent2 f x (S y) = x * (exponent2 f x y)
+exponent2 f x Z = case f Z of Z -> exponent2 f x Z; y -> y
+-- SYMFUN: The following line makes use of symbolic function
+exponent2 f x (S y) = x * (exponent2 f x (f y))
 
-main = do
-  power <- mkSymbolic
-  symFun <- mkSymbolic
-  print $ int (exponent2 symFun 3 (fromInteger power))
+main power symFun = int (exponent2 symFun 3 (fromInteger power))
 
 --
 -- Timing for hbc version 0.997.2
