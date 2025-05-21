@@ -2,11 +2,10 @@
 -- Colin Runciman (colin@cs.york.ac.uk); March 1996.
 -- See article "Lazy wheel sieves and spirals of primes" (to appear, JFP).
 
+module Main2 where
+
 import System.Environment
 import Control.Monad (forM_)
-
-import G2.Symbolic
-
 
 data Wheel = Wheel Int [Int]
 
@@ -47,11 +46,4 @@ nextSize (Wheel s ns) p =
               n <- ns,
               n' <- [n+o], n'`mod`p > 0]
 
-{-main = forM_ [1..100] $ const $ do
-  arg <- mkSymbolic
-	print (prime (arg))-}
-
-main = do
-  arg <- mkSymbolic
-  symFun <- mkSymbolic
-  print (prime symFun arg)
+main arg symFun = prime symFun arg

@@ -1,6 +1,6 @@
+module Main2 where
+	
 import System.Environment
-
-import G2.Symbolic
 
 isdivs :: Int  -> Int -> Bool
 isdivs n x = mod x n /= 0
@@ -12,7 +12,4 @@ prime :: ([Int] -> [Int]) -> Int -> Int
 -- SYMFUN: The following line makes use of symbolic function
 prime f n = map head (iterate f [2..n*n]) !! n
 
-main = do
-	arg <- mkSymbolic
-	symFun <- mkSymbolic
-	print $ prime symFun arg
+main arg symFun = prime symFun arg

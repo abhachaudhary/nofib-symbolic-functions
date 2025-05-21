@@ -19,7 +19,6 @@ import Data.Bits
 import Data.Word
 import System.Environment
 
-import G2.Symbolic
 
 vdim :: Int
 vdim = 100

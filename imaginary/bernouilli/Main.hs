@@ -5,11 +5,11 @@
 -- It's not a very good test, I suspect, because it manipulates big integers,
 -- and so probably spends most of its time in GMP.
 
+module Bernouilli where
+
 import Data.Ratio
 import System.Environment
 import Control.Monad
-
-import G2.Symbolic
 
 -- powers = [[r^n | r<-[2..]] | n<-1..]
 -- type signature required for compilers lacking the monomorphism restriction
@@ -25,24 +25,13 @@ neg_powers =
 pascal:: [[Integer]]
 pascal = [1,2,1] : map (\line -> zipWith (+) (line++[0]) (0:line)) pascal
 
-bernoulli' _ 0 = 1
-bernoulli' _ 1 = -(1%2)
-bernoulli' _ n | odd n = 0
-bernoulli' f n =
+bernoulli _ 0 = 1
+bernoulli _ 1 = -(1%2)
+bernoulli _ n | odd n = 0
+bernoulli f n =
    (-1)%2
      -- SYMFUN: The following line makes use of symbolic function
      + sum [ fromIntegral ((sum $ zipWith f powers (tail $ tail combs)) -
-                            fromIntegral k) %
-             fromIntegral (k+1)
-     | (k,combs)<- zip [2..n] pascal]
-  where powers = (neg_powers!!(n-1))
-
-bernoulli 0 = 1
-bernoulli 1 = -(1%2)
-bernoulli n | odd n = 0
-bernoulli n =
-   (-1)%2
-     + sum [ fromIntegral ((sum $ zipWith (*) powers (tail $ tail combs)) -
                             fromIntegral k) %
              fromIntegral (k+1)
      | (k,combs)<- zip [2..n] pascal]
@@ -53,8 +42,6 @@ bernoulli n =
  let n = (arg)::Int
  print (hash (show (bernoulli n)))-}
 
-main = do
-  arg <- mkSymbolic
-  symFun <- mkSymbolic
-  let n = (arg)::Int
-  print (bernoulli' symFun n)
+main arg symFun  =
+  let n = (arg)::Int in
+  bernoulli symFun n

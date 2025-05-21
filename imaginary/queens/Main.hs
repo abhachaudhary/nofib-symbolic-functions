@@ -1,14 +1,13 @@
 -- !!! count the number of solutions to the "n queens" problem.
 -- (grabbed from LML dist)
 
+module Main2 where
+
 import System.Environment
 
 import G2.Symbolic
 
-main = do
-   arg <- mkSymbolic
-   symFun <- mkSymbolic
-   print $ nsoln symFun arg
+main arg symFun = nsoln symFun arg
 
 nsoln f nq = length (gen f nq)
  where

@@ -6,21 +6,16 @@
 -- rather that the output itself, thus avoiding having to generate such a
 -- huge output file to get a reasonable execution time.
 
-module Main (main) where
+module Main2 (main) where
 
 import Data.Char
 import System.Environment
-
-import G2.Symbolic
 
 {-main = replicateM_ 500 $ do
   regex <- mkSymbolic
   print (hash (concat (expand regex)))-}
 
-main = do
-  regex <- mkSymbolic
-  symFun <- mkSymbolic
-  print (concat (expand' regex symFun))
+main regex symFun = concat (expand' regex symFun)
 
 numchars :: [String] -> Int
 numchars l = sum $ map length l
