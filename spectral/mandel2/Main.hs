@@ -3,13 +3,13 @@
 -- BUILDS A MAND-TREE, which contains, at its leaves, a colour.
 -- Tree is then traversed and points along with their colour are output
 
-module Main where
+module Main2 where
 
 import Control.Monad
 import System.Environment
 import NofibUtils
 
-a `par` b = b
+-- a `par` b = b
 --1.3 a `seq` b = b
 
 -- MandTree - either contains a NS node with two subtrees
@@ -35,8 +35,9 @@ size :: Int
 size =  200
 
 -- build_tree - Constructs mandtree
-build_tree :: Point -> Point -> MandTree
-build_tree p1@(x1,y1)
+build_tree :: (MandTree -> MandTree -> MandTree) -> Point -> Point -> MandTree
+build_tree par 
+           p1@(x1,y1)
            p2@(x2,y2)
            =
             if rec_col /= -1 then   -- All points in currnet rectangle are same colour
@@ -62,10 +63,10 @@ build_tree p1@(x1,y1)
                  ewp4    = p2
                  split_x = (x2+x1) `div` 2
                  split_y = (y2+y1) `div` 2
-                 btns1   = build_tree nsp1 nsp2
-                 btns2   = build_tree nsp3 nsp4
-                 btew1   = build_tree ewp1 ewp2
-                 btew2   = build_tree ewp3 ewp4
+                 btns1   = build_tree par nsp1 nsp2
+                 btns2   = build_tree par nsp3 nsp4
+                 btew1   = build_tree par ewp1 ewp2
+                 btew2   = build_tree par ewp3 ewp4
 
 
 check_perim :: Point -> Point -> Colour
@@ -217,9 +218,7 @@ finite (Leaf c)   =  (c == c)
 finite (NS t1 t2) =  (finite t1 && finite t2)
 finite (EW t1 t2) =  (finite t1 && finite t2)
 
-main = do
-  [n] <- getArgs
-  replicateM_ (read n) $ do
+main symFun =
     -- m should always be smaller than size, but the compiler can't know that
-    size' <- salt size
-    finite (build_tree (0,0) (size',size' `div` 2)) `seq` return ()
+    let size' = 4 in
+    finite (build_tree symFun (0,0) (size',size' `div` 2)) `seq` return ()

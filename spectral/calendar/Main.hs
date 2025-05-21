@@ -12,8 +12,6 @@ import Data.Char
 import System.Environment
 import Control.Monad
 
-import G2.Symbolic
-
 -- To keep it backward compatible with pre-Haskell 98 compilers..
 #define fail ioError
 

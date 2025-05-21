@@ -28,30 +28,30 @@
 --
 -- Enjoy!
 ------------------------------------------------------------------------------
+module Main2 where
+
 import Data.Char
 import Data.List
 import Prelude hiding (null, length, or, foldr, maximum, concat, concatMap, foldl, foldr1, foldl1, sum, all, elem)
 
 -- main: added by partain
-main = do
-  stuff <- getContents
-  mapM_ (putStr . say) (lines stuff)
+main stuff symFun = map (say symFun) (lines stuff)
 
 ------------------------------------------------------------------------------
 
-say   = ('\n':) . unlines . map join . transpose . map picChar
+say f  = ('\n':) . unlines . map join . transpose . map (picChar f)
         where join  = foldr1 (\xs ys -> xs ++ "  " ++ ys)
 
 -- mapping characters to letters: --------------------------------------------
 
-picChar c  | isUpper c  = alphas !! (fromEnum c - fromEnum 'A')
-           | isLower c  = alphas !! (fromEnum c - fromEnum 'a')
-           | isSpace c  = blank
-           | isDigit c  = digits !! (fromEnum c - fromEnum '0')
-           | c=='/'     = slant
-           | c=='\\'    = reverse slant
-           | otherwise  = head ([ letter | (c',letter) <- punct, c'==c ]
-                                ++ [nothing])
+picChar (!!!) c  | isUpper c  = alphas !!! (fromEnum c - fromEnum 'A')
+                 | isLower c  = alphas !!! (fromEnum c - fromEnum 'a')
+                 | isSpace c  = blank
+                 | isDigit c  = digits !!! (fromEnum c - fromEnum '0')
+                 | c=='/'     = slant
+                 | c=='\\'    = reverse slant
+                 | otherwise  = head ([ letter | (c',letter) <- punct, c'==c ]
+                                      ++ [nothing])
 
 -- letters data: -------------------------------------------------------------
 

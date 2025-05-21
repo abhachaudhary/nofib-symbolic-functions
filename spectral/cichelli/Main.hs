@@ -1,11 +1,6 @@
-module Main where
+module Main2 where
 
 import Prog (prog)
 import System.Environment
 
-import G2.Symbolic
-
-main = do
-    n <- mkSymbolic
-    symFun <- mkSymbolic
-    putStr (prog symFun n)
+main n symFun = prog symFun n

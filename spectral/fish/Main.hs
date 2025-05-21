@@ -1,9 +1,7 @@
-module Main (main) where
+module Main2 (main) where
 
 import System.Environment
 import Control.Monad
-
-import G2.Symbolic
 
 -- A vector is a pair of floats
 type Vec = (Int, Int)
@@ -109,7 +107,7 @@ side2 = quartet side1 side1 (rot t) t
 corner1 = quartet nil nil nil u
 corner2 = quartet corner1 side1 (rot side1) u
 pseudocorner = quartet corner2 side2 (rot side2) (rot t)
-pseudolimit = cycle' pseudocorner
+pseudolimit = cycle'
 nonet p1 p2 p3 p4 p5 p6 p7 p8 p9
  = above 1 2 (beside 1 2 p1 (beside 1 1 p2 p3))
    (above 1 1 (beside 1 2 p4 (beside 1 1 p5 p6))
@@ -130,7 +128,6 @@ fmt (x:xs) = (showString "[\n" . showsPrec 0 x . showl xs) ""
 	-- bug that made showl look good.  So I've "optimised" it by hand
 	-- to avoid bizarre comparison numbers
 
-main = do
-  i <- mkSymbolic
-  let n = min 0 i
-  length (fmt (pseudolimit (0, 0) (640+n, 0) (0,640+n))) `seq` return ()
+main i symFun =
+  let n = min 0 i in
+  length (fmt (pseudolimit symFun (0, 0) (640+n, 0) (0,640+n))) `seq` return ()

@@ -2,12 +2,11 @@
 
 	See Proceedings of WAAAPL '99
 -}
+module Main2 where
 
 import Data.List
 import Prelude hiding (Maybe(Just,Nothing), null, length, or, foldr, maximum, concat, foldl, foldr1, foldl1, sum, all, elem, notElem)
 import System.Environment
-
-import G2.Symbolic
 
 -----------------------------
 -- The main program
@@ -21,8 +20,8 @@ import G2.Symbolic
 --     try algorithm = print (length (search algorithm (queens n)))
 --   sequence_ (map try [(bt symFun), bm, (bjbt symFun), (bjbt' symFun), fc])
 
-main2 :: (CSP -> State -> ConflictSet) -> Int -> [Int]
-main2 symFun n = 
+main :: (CSP -> State -> ConflictSet) -> Int -> [Int]
+main symFun n = 
   let
     try algorithm = length (search algorithm (queens n))
   in

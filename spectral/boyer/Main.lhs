@@ -36,8 +36,6 @@ module Main2 (main) where
 import System.Environment
 import Control.Monad (forM_)
 
-import G2.Symbolic
-
 data Term               = Var Id |
                           Fun Id [Term] [Lemma]
 
@@ -191,19 +189,19 @@ The current assumptions are passed to recursive calls as @true_lst@
 and @false_lst@ which are initially empty.
 \begin{code}
 
-tautp :: Term -> Bool
-tautp x = tautologyp (rewrite x) [] []
+tautp :: (Term -> [Term] -> Bool) -> Term -> Bool
+tautp truep_sym x = tautologyp truep_sym (rewrite x) [] []
 
-tautologyp :: Term -> [Term] -> [Term] -> Bool
-tautologyp x true_lst false_lst
-        | truep  x true_lst     = True  -- trivially or assumed true
+tautologyp :: (Term -> [Term] -> Bool) -> Term -> [Term] -> [Term] -> Bool
+tautologyp truep_sym x true_lst false_lst
+        | truep_sym  x true_lst     = True  -- trivially or assumed true
         | falsep x false_lst    = False -- trivially or assumed false
-tautologyp (Fun IF [cond, t, e] ls) true_lst false_lst
-        | truep cond true_lst   = tautologyp t true_lst false_lst
-        | falsep cond false_lst = tautologyp e true_lst false_lst
-        | otherwise             =  tautologyp t (cond:true_lst) false_lst
-                                   && tautologyp e true_lst (cond:false_lst)
-tautologyp _ _ _                = False
+tautologyp truep_sym (Fun IF [cond, t, e] ls) true_lst false_lst
+        | truep_sym cond true_lst   = tautologyp truep_sym t true_lst false_lst
+        | falsep cond false_lst = tautologyp truep_sym e true_lst false_lst
+        | otherwise             =  tautologyp truep_sym t (cond:true_lst) false_lst
+                                   && tautologyp truep_sym e true_lst (cond:false_lst)
+tautologyp _ _ _ _                = False
 
 \end{code}
 A term is true if it is the constant @TRUE@ or if it has been assumed
@@ -236,15 +234,15 @@ can be rewritten in any interesting way.
 --  n <- mkSymbolic
 --  print (test (read n))
 
-main :: Int -> Bool
-main n = test n
+main :: (Term -> [Term] -> Bool) -> Int -> Bool
+main truep_sym n = test truep_sym n
 
-test :: Int -> Bool
-test n = all test0 xs
+test :: (Term -> [Term] -> Bool) -> Int -> Bool
+test truep_sym n = all (test0 truep_sym) xs
  where xs = take n (repeat (Var X))
        {-# NOINLINE xs #-}
 
-test0 xxxx = tautp (apply_subst subst0 theorem)
+test0 truep_sym xxxx = tautp truep_sym (apply_subst subst0 theorem)
  where
         subst0 = [
                   (X,   f (plus (plus a b) (plus c zero))),

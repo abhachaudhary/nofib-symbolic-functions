@@ -33,7 +33,7 @@ expand x = constantRule x-}
 constantRule f (c:rest) = [ c:z | z <- expand' f rest ]
 
 alphabeticRule f (a:'-':b:']':rest)
-  | a <= b  	= [c:z | c <- [a..b],	      z <- expand' f rest]
+  | a <= b  	= [c:z | c <- f [a..b],	      z <- expand' f rest]
   -- SYMFUN: The following line makes use of symbolic function
   | otherwise	= [c:z | c <- f [b..a], z <- expand' f rest]
 

@@ -12,7 +12,7 @@ questions to continue the search for solutions. Each answer should be `yes' or
 or whether the search should be continued for alternative solutions.
 ------------------------------------------------------------------------------}
 
-module Main where
+module Main2 where
 import Result
 import Table
 import Knowledge
@@ -20,8 +20,6 @@ import Match
 import Search
 --import System.IO
 import System.Environment
-
-import G2.Symbolic
 
 -- The `main' function reads in the data file before interacting with user.
 -- The `process' function takes the contents of the file and the input from the
@@ -32,19 +30,7 @@ import G2.Symbolic
 -- output.  The questions are also extracted and used to help build the
 -- information table which contains question-and-answer pairs.
 
-main = do
-   n <- mkSymbolic
-   --animals <- readFile "runtime_files/animals"
-   animals <- mkSymbolic
-   contents <- getContents
-   symFun <- mkSymbolic
-   print
-      . length
-      . process symFun animals
-      . take (n + 9999)
-      $ contents
-
-main2 symFun content input = process symFun content input
+main symFun content input = process symFun content input
 
 {- OLD 1.2:
 main rs =
@@ -84,6 +70,8 @@ process f contents input =
 -- argument is a list of the questions seen so far.
 
 strip qs [] = []
+strip qs (Question q1 : Question q2 : rs) | elem q1 qs && not (elem q2 qs)=
+      Question q2 : strip (q2:qs) rs
 strip qs (Question q : rs) =
    if elem q qs then strip qs rs else
    Question q : strip (q:qs) rs

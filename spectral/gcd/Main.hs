@@ -34,9 +34,11 @@ main =  do
           ns     = [n..(n+d)]
           ms     = [m..(m+d)]
           pairs  = [(x,y)| x<-ns, y<-ms]         -- (d+1)^2 of pairs
-          tripls = map (\ (x,y)->(x,y,gcdE symFun1 symFun2 x y)) pairs
+          tripls = map (\ (x,y)->(x,y,gcdE x y)) pairs
 
-          rs     = map (\ (_,_,(g,u,v))-> abs (g+u+v)) tripls
+          rs     = map (\ (_,_,(g,u,v))->
+                                let a = abs (g+u+v) in
+                                if symFun1 a == symFun2 a then a else a + 1) tripls
 
           max' [x]      = x
           max' (x:y:xs) = if x<y then max' (y:xs)  else  max' (x:xs)
@@ -50,15 +52,17 @@ test (x,y,(d,u,v)) =  d==(u*x+v*y)  &&  d==(gcd x y)
 
 -- gcdE x y -> (d,u,v):   d = gcd(x,y) = u*x + v*y
 
-gcdE :: Integral a => ((a -> a -> (a, a)) -> (a, a)) -> (a -> a -> (a, a)) -> a -> a -> (a,a,a)
+gcdE :: Integral a => a -> a -> (a,a,a)
 
-gcdE f h 0 y = (y,0,1)
-gcdE f h x y = g (1,0,x) (0,1,y)
+gcdE 0 y = (y,0,1)
+gcdE x y = g (1,0,x) (0,1,y)
   where
   g (u1,u2,u3) (v1,v2,v3) =
                    if  v3==0  then  (u3,u1,u2)
                    else
-                     case  f h
+                     case  quotRem u3 v3
                      of
                        (q,r) -> g (v1,v2,v3) (u1-q*v1, u2-q*v2, r)
+
+
 

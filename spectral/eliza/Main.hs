@@ -7,18 +7,14 @@
 -- pascal code apparently provided by Robert Migliaccio (mig@ms.uky.edu).
 -------------------------------------------------------------------------------
 
+module Main2 where
+
 import Data.Char -- 1.3
 import Prelude hiding (Word)
 import System.Environment (getArgs)
 
-import G2.Symbolic
-
-main = do
-  n <- mkSymbolic 
-  input <- mkSymbolic
-  symFun <- mkSymbolic
-  print
-    . length
+main n input symFun =
+      length
     . session symFun initial []
     . filter (not.null)
     . map (words . trim)
@@ -36,18 +32,18 @@ trim   = foldr cons "" . dropWhile (`elem` punct)
 
 -- Read a line at a time, and produce some kind of response -------------------
 
-session               :: (State -> String) -> State -> Words -> [Words] -> String
+session               :: (String -> String) -> State -> Words -> [Words] -> String
 session f rs prev []     = []
 session f rs prev (l:ls) = response ++ "\n\n" ++ session f rs' l ls
                          where (response, rs') | prev == l = repeated rs
                                                | otherwise = answer f rs l
 
-answer                :: (State -> String) -> State -> Words -> (String, State)
+answer                :: (String -> String) -> State -> Words -> (String, State)
 answer f st l            = (response, newKeyTab kt st)
  where (response, kt)         = ans (keyTabOf st)
        e `cons` (r, es)       = (r, e:es)
        ans (e:es) | null rs   = e `cons` ans es
-                  | otherwise = (makeResponse (f st) (head rs), (key,as):es)
+                  | otherwise = (f (makeResponse a (head rs)), (key,as):es)
                          where rs           = replies key l
                                (key,(a:as)) = e
 

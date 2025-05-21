@@ -3,8 +3,6 @@
 module Main2 (main) where
 import System.Environment
 
-myPrint d = if d > 0 then return "gt" else return "lt"
-
 main arg symFun = nfib symFun arg
 
 nfib :: (Double -> Double -> Double) -> Double -> Double

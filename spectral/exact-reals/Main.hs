@@ -1,27 +1,23 @@
 -- Taken from "The worlds shortest correct exact real arithmetic program?"
 -- David Lester, Information and Computation 216, pp39-46, 2012, Elsevier
 
-module Main where
+module Main2 where
 
 import Data.Ratio
 import Data.Char
 import System.Environment
 
-import G2.Symbolic
-
 -- Should print exactly zero
-main = do
-  s <- mkSymbolic
-  let n = read s :: Int
-  print (sum (map (\x -> sin (x * pi)) [1..fromIntegral n::CR]))
-
-main2 n symFun = sum (map (\x -> sin (x * pi)) [1..fromIntegral n::CR])
+main n symFun = sum (map (\x -> sin_rc symFun (trig_rr (x * pi))) [1..fromIntegral n::CR])
 
 
 digits :: Int   -- number of printed decimal digits
 digits = 40     -- (change as required)
 
 data CR = CR_ (Int -> Integer)
+
+(.*) :: CR -> (Int -> Int) -> CR
+(CR_ f) .* g = CR_ (f . g)
 
 instance Eq  CR where x == y = approx (x-y) == 0
 
@@ -80,8 +76,8 @@ instance Floating CR where
                        atan (s/x) - pi / 2
          where t = bits 0 x; s = sqrt (1 - x*x)
 
-  sin   x = sin_rc (trig_rr x)
-  cos   x = cos_rc (trig_rr x)
+  sin  x = sin_rc (\x -> x) (trig_rr x)
+  cos  x = cos_rc (\x -> x) (trig_rr x)
   acos  x = pi / 2 - asin x
   sinh  x = (y - recip y) / 2 where y = exp x
   cosh  x = (y + recip y) / 2 where y = exp x
@@ -94,14 +90,14 @@ trig_rr :: CR -> (Integer,CR)
 trig_rr x = (s `mod` 8, x-piBy4*fromInteger s)
   where s = rbits 2 (x/piBy4)
 
-sin_rc,cos_rc :: (Integer,CR) -> CR
-sin_rc (n,y) | n == 0    = s
+sin_rc,cos_rc :: (Int -> Int) -> (Integer,CR) -> CR
+sin_rc g (n,y) | n == 0    = s
              | n == 1    = sqrt1By2*(c+s)
              | n == 2    = c
              | n == 3    = sqrt1By2*(c-s)
-             | otherwise = {- n >= 4 -} -sin_rc(n-4,y)
-             where s = sin_dr y; c = cos_dr y
-cos_rc (n,y) = sin_rc ((n+2) `mod` 8,y)
+             | otherwise = {- n >= 4 -} -sin_rc g (n-4,y .* g)
+             where s = sin_dr (y .* g); c = cos_dr y
+cos_rc g (n,y) = sin_rc g ((n+2) `mod` 8,y)
 
 acc_seq :: (Rational -> Integer -> Rational) -> [Rational]
 acc_seq f = scanl f (1%1) [1..]
