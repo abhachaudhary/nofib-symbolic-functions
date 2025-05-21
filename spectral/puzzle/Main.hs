@@ -89,17 +89,17 @@ writeHistory history
      where
        total = totalTime history
 
-minSolutions :: Solutions -> Solutions
-minSolutions [ ] = [ ]
-minSolutions (history : next)
-  = reverse (minAcc (totalTime history) [history] next)
+minSolutions :: (Int -> Int -> Ordering) -> Solutions -> Solutions
+minSolutions f [ ] = [ ]
+minSolutions f (history : next)
+  = reverse (minAcc f (totalTime history) [history] next)
       where
-        minAcc minSoFar mins [ ] = mins
-        minAcc minSoFar mins (history : next)
-          = case compare minSoFar total of
-              LT -> minAcc minSoFar mins next
-              EQ -> minAcc minSoFar (history : mins) next
-              GT -> minAcc total [history] next
+        minAcc f minSoFar mins [ ] = mins
+        minAcc f minSoFar mins (history : next)
+          = case f minSoFar total of
+              LT -> minAcc f minSoFar mins next
+              EQ -> minAcc f minSoFar (history : mins) next
+              GT -> minAcc f total [history] next
             where
               total = totalTime history
 
@@ -174,12 +174,12 @@ main = do
     let mins = minSolutions solutions
     foldr seq () (writeSolutions mins 1 "") `seq` return ()-}
 
-main args =
+main symFun args =
   let
     time
       | length args == 1 = 0
       | otherwise        = error "puzzle expects exactly one argument"
     solutions = transfer initialState finalState RightBank time [ ]
-    mins = minSolutions solutions
+    mins = minSolutions symFun solutions
   in 
     foldr seq () (writeSolutions mins 1 "")

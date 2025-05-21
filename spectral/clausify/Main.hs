@@ -34,17 +34,17 @@ David
 -- an excellent benchmark is: (a = a = a) = (a = a = a) = (a = a = a)
 -- batch mode version David Wakeling, February 1992
 
-module Main(main) where
+module Main2 (main) where
 
 import Data.Ix
 import System.Environment
 
-import G2.Symbolic
+-- main = do
+--   n <- mkSymbolic
+--   symFun <- mkSymbolic
+--   putStr (res symFun n)
 
-main = do
-  n <- mkSymbolic
-  symFun <- mkSymbolic
-  putStr (res symFun n)
+main symFun n = res symFun n
 
 res f n = concat (map (clauses f) xs)
  where xs = take n (repeat "(a = a = a) = (a = a = a) = (a = a = a)")

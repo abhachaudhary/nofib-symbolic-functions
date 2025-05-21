@@ -1,4 +1,4 @@
-module Main where
+module Main2 where
 
 import Sort
 
@@ -7,12 +7,14 @@ import Data.List (intersperse)
 import System.Environment (getArgs)
 import NofibUtils (hash)
 
-main = do
-  (n:_) <- getArgs
-  replicateM_ (read n) $ do
-    (_:s:_) <- getArgs
-    f <- readFile s
-    print (hash (mangle f))
+-- main = do
+--   (n:_) <- getArgs
+--   replicateM_ (read n) $ do
+--     (_:s:_) <- getArgs
+--     f <- readFile s
+--     print (hash (mangle f))
+
+main s = mangle s
 
 mangle :: String{-input to sort-} -> String{-output-}
 mangle inpt

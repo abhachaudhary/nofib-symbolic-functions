@@ -631,6 +631,9 @@ BENCHMARK
 >  where xs = take n (repeat ("I(a * b)", "I(b) * I(a)"))
 >	 {-# NOINLINE xs #-}
 
-> main = do
->   (n:_) <- getArgs
->   print (test (read n :: Int))
+> -- main = do
+> --  (n:_) <- getArgs
+> --  print (test (read n :: Int))
+
+> main2 :: Int -> Bool
+> main2 n = test n

@@ -47,15 +47,21 @@ module Main where
 import Data.Array
 import Data.Ix
 import System.Environment (getArgs)
+
+import G2.Symbolic
 infixr 1 =:
 type Assoc a b = (a,b)
 (=:) = (,)
 
 main = do
-  (n:_) <- map read <$> getArgs
+  n <- mkSymbolic
   if n >= 0
     then reportSimple n
     else reportSimple2 (- n)
+
+-- main symFun n = if n >= 0
+--     then reportSimple n ;
+--     else reportSimple2 (- n)
 
 reportSimple :: Int -> IO ()
 reportSimple iterations =

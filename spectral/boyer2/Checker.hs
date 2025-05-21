@@ -19,20 +19,20 @@ module Checker (tautologyp) where
 
 import Lisplikefns
 
-tautologyp :: (Lisplist, Lisplist, Lisplist) -> Bool
-tautologyp (Nil, _, _) = False
-tautologyp (term@(Atom x), truelst, _) = truep (term, truelst)
-tautologyp (term@(Cons (x, y)), truelst, falselst) =
-    if truep (term, truelst) then True
+tautologyp :: ((Lisplist, Lisplist) -> Bool) -> (Lisplist, Lisplist, Lisplist) -> Bool
+tautologyp f (Nil, _, _) = False
+tautologyp f (term@(Atom x), truelst, _) = truep (term, truelst)
+tautologyp f (term@(Cons (x, y)), truelst, falselst) =
+    if (f (term, truelst) && not (f (car y, truelst))) then True
     else if falsep (term, falselst) then False
     else case x of
     	Atom "if" -> if truep (car y, truelst) then
-                     	tautologyp (cadr y, truelst, falselst)
+                     	tautologyp f (cadr y, truelst, falselst)
                      else if falsep (car y, falselst) then
-                     	tautologyp (caddr y, truelst, falselst)
+                     	tautologyp f (caddr y, truelst, falselst)
                      else
-                        (tautologyp (cadr y, Cons (car y, truelst), falselst)) &&
-                        (tautologyp (caddr y, truelst, Cons (car y, falselst)))
+                        (tautologyp f (cadr y, Cons (car y, truelst), falselst)) &&
+                        (tautologyp f (caddr y, truelst, Cons (car y, falselst)))
     	_         -> False
 
 truep :: (Lisplist, Lisplist) -> Bool

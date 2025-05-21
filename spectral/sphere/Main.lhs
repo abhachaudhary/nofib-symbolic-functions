@@ -35,7 +35,7 @@ This is a Haskell port of the Id version from the Impala
 suite URL: http://www.csg.lcs.mit.edu/impala/
 16 July, 1998, David J. King (d.j.king@open.ac.uk)
 
-> module Main where
+> module Main2 where
 
 > import Control.Monad
 > import System.Environment
@@ -189,12 +189,12 @@ standard balls
 --------------------------------------------------------------------------------
 main routine
 
-> ray :: Int -> [((Int, Int),Vector)]
-> ray winsize = [ ((i,j), f i j) | i<-[0..winsize-1], j<-[0..winsize-1]]
+> ray :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Int -> [((Int, Int),Vector)]
+> ray symFun1 symFun2 winsize = [ ((i,j), f i j) | i<-[0..winsize-1], j<-[0..winsize-1]]
 >     where
 >       lights = testlights
 >       (firstray, scrnx, scrny) = camparams lookfrom lookat vup fov (fromIntegral winsize)
->       f i j = tracepixel world lights (fromIntegral i) (fromIntegral j) firstray scrnx scrny
+>       f i j = tracepixel symFun1 symFun2 world lights (fromIntegral i) (fromIntegral j) firstray scrnx scrny
 
 
 > dtor :: Double -> Double
@@ -223,24 +223,24 @@ main routine
 
 Colour the given pixel
 
-> tracepixel ::  [Sphere] -> [Light] -> Double -> Double -> Vector -> Vector
+> tracepixel :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) ->  [Sphere] -> [Light] -> Double -> Double -> Vector -> Vector
 >            -> Vector -> Vector
-> tracepixel spheres lights x y firstray scrnx scrny
+> tracepixel f g spheres lights x y firstray scrnx scrny
 >               = if hit
->                   then shade lights sp pos dir dist (1,1,1)
+>                   then shade f g lights sp pos dir dist (1,1,1)
 >                   else background
 >     where
 >       pos = lookfrom
 >       (dir, _) = vecnorm (vecadd (vecadd firstray (vecscale scrnx x))
 >                          (vecscale scrny y))
->       (hit, dist, sp) = trace spheres pos dir -- pick first intersection
+>       (hit, dist, sp) = trace f g spheres pos dir -- pick first intersection
 
 
 --------------------------------------------------------------------------------
 find first intersection point in set of all objects
 
-> trace :: [Sphere] -> Vector -> Vector -> (Bool,Double,Sphere)
-> trace spheres pos dir
+> trace :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> [Sphere] -> Vector -> Vector -> (Bool,Double,Sphere)
+> trace g h spheres pos dir
 >               = if (null dists)
 >                   then (False, infinity, head spheres)        -- missed all
 >                   else (True, mindist, sp)            -- pick the smallest one
@@ -253,7 +253,7 @@ find first intersection point in set of all objects
 >       sphmap (x:xs) = if is_hit
 >                         then (where_hit, x):sphmap xs
 >                         else sphmap xs
->               where (is_hit, where_hit) = sphereintersect pos dir x
+>               where (is_hit, where_hit) = sphereintersect g h pos dir x
 >       dists = sphmap spheres
 
 
@@ -266,8 +266,8 @@ Contrib answers "what's the most my result can add to the working
 pixel?"  and will abort a reflected or transmitted ray if it gets too
 small.
 
-> shade :: [Light] -> Sphere -> Vector -> Vector -> Double -> Vector -> Vector
-> shade lights sp lookpos dir dist contrib = rcol
+> shade :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> [Light] -> Sphere -> Vector -> Vector -> Double -> Vector -> Vector
+> shade f g lights sp lookpos dir dist contrib = rcol
 >     where
 >       hitpos = vecadd lookpos (vecscale dir dist)
 >       ambientlight = (1, 1, 1)        -- full contribution as default
@@ -276,14 +276,14 @@ small.
 >       norm = spherenormal hitpos sp
 >       refl = vecadd dir (vecscale norm (-2*(vecdot dir norm)))
 >       -- diff is diffuse and specular contribution
->       diff = vecsum (map (\l->lightray l hitpos norm refl surf) lights)
+>       diff = vecsum (map (\l->lightray f g l hitpos norm refl surf) lights)
 >       transmitted = transmitsurf surf
 >       simple = vecadd amb diff
 >       -- calculate transmitted ray; it adds onto "simple"
 >       trintensity = vecscale (bodysurf surf) transmitted
 >       (is_tir, trcol) = if transmitted < epsilon
 >                           then (False, simple)
->                           else transmitray lights simple hitpos dir
+>                           else transmitray f g lights simple hitpos dir
 >                                            index trintensity contrib norm
 >                         where index = refractsurf surf
 >       -- reflected ray; in case of TIR, add transmitted component
@@ -293,15 +293,15 @@ small.
 >                     else reflsurf
 >       rcol = if is_zerovector reflectiv
 >                then trcol
->                else reflectray hitpos refl lights reflectiv contrib trcol
+>                else reflectray f g hitpos refl lights reflectiv contrib trcol
 
 
 --------------------------------------------------------------------------------
 Transmit a ray through an object
 
-> transmitray :: [Light] -> Vector -> Vector -> Vector -> Double -> Vector
+> transmitray :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> [Light] -> Vector -> Vector -> Vector -> Double -> Vector
 >             -> Vector -> Vector -> (Bool, Vector)
-> transmitray lights colour pos dir index intens contrib norm
+> transmitray f g lights colour pos dir index intens contrib norm
 >       = if is_zerovector newcontrib
 >           then (False, colour)        -- cutoff
 >           else (False, vecadd (vecmult newcol intens) colour)
@@ -309,25 +309,25 @@ Transmit a ray through an object
 >       newcontrib         = vecmult intens contrib
 >       (is_tir, newdir)   = refractray index dir norm
 >       nearpos            = vecadd pos (vecscale newdir epsilon)
->       (is_hit, dist, sp) = trace world nearpos newdir
->       newcol | is_hit    = shade lights sp nearpos newdir dist newcontrib
+>       (is_hit, dist, sp) = trace f g world nearpos newdir
+>       newcol | is_hit    = shade f g lights sp nearpos newdir dist newcontrib
 >              | otherwise = background
 
 --------------------------------------------------------------------------------
 Reflect a ray from an object
 
-> reflectray :: Vector -> Vector -> [Light] -> Vector -> Vector -> Vector
+> reflectray :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Vector -> Vector -> [Light] -> Vector -> Vector -> Vector
 >            -> Vector
-> reflectray pos newdir lights intens contrib colour
+> reflectray f g pos newdir lights intens contrib colour
 >       = if is_zerovector newcontrib
 >           then colour
 >           else vecadd colour (vecmult newcol intens)
 >       where
 >       newcontrib = vecmult intens contrib
 >       nearpos = vecadd pos (vecscale newdir epsilon)
->       (is_hit, dist, sp) = trace world nearpos newdir
+>       (is_hit, dist, sp) = trace f g world nearpos newdir
 >       newcol = if is_hit
->                 then shade lights sp nearpos newdir dist newcontrib
+>                 then shade f g lights sp nearpos newdir dist newcontrib
 >                 else background
 
 --------------------------------------------------------------------------------
@@ -354,12 +354,12 @@ to incoming ray, figure out which side of the surface the light is on,
 and if it's shadowed by another object in the world.  Return light's
 contribution to the object's colour
 
-> lightray :: Light -> Vector -> Vector -> Vector -> [Surfspec] -> Vector
-> lightray l pos norm refl surf =
+> lightray :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Light -> Vector -> Vector -> Vector -> [Surfspec] -> Vector
+> lightray f g l pos norm refl surf =
 >      let
 >        (ldir, dist) = lightdirection l pos
 >        cosangle = vecdot ldir norm      -- lightray is this far off normal
->        (is_inshadow, lcolour) = shadowed pos ldir (lightcolour l)
+>        (is_inshadow, lcolour) = shadowed f g pos ldir (lightcolour l)
 >      in
 >        if is_inshadow then (0,0,0)
 >        else
@@ -392,12 +392,12 @@ contribution to the object's colour
 
 need to offset just a bit
 
-> shadowed :: Vector -> Vector -> a -> (Bool,a)
-> shadowed pos dir lcolour = if not is_hit
+> shadowed :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Vector -> Vector -> a -> (Bool,a)
+> shadowed f g pos dir lcolour = if not is_hit
 >                             then (False, lcolour)
 >                             else (True, lcolour)              -- for now
 >     where
->       (is_hit, dist, sp) = trace world (vecadd pos (vecscale dir epsilon)) dir
+>       (is_hit, dist, sp) = trace f g world (vecadd pos (vecscale dir epsilon)) dir
 
 --------------------------------------------------------------------------------
 sphere specific items
@@ -406,8 +406,8 @@ figure when a ray hits a sphere
 
 Assumes direction vector is normalised!
 
-> sphereintersect :: Vector -> Vector -> Sphere -> (Bool,Double)
-> sphereintersect pos dir sp = if disc < 0
+> sphereintersect :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Vector -> Vector -> Sphere -> (Bool,Double)
+> sphereintersect f g pos dir sp = if f g disc < f g 0
 >                                then (False, 0)        -- imaginary solns only
 >                                else if slo < 0
 >                                       then if shi < 0
@@ -439,13 +439,16 @@ How to compile (with ghc), run (with size 100), and view (with xv):
 % ray 100 > spheres.ppm
 % xv spheres.ppm
 
-> main :: IO ()
-> main = replicateM_ 100 $
->        getArgs >>= \[winsize_string] ->
->        run (read winsize_string)
+> --main :: IO ()
+> --main = replicateM_ 100 $
+> --       getArgs >>= \[winsize_string] ->
+> --       run (read winsize_string)
 >
-> run :: Int -> IO ()
-> run winsize = print (hash (map snd (ray winsize)))
+> main :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Int -> Int
+> main symFun1 symFun2 winsize = run symFun1 symFun2 winsize
+>
+> run :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Int -> Int
+> run symFun1 symFun2 winsize = hash (map snd (ray symFun1 symFun2 winsize))
 >
 > hash :: [Vector] -> Int
 > hash = foldr (\(r,g,b) acc -> u8 r + u8 g*7 + u8 b*23 + acc*61) 0

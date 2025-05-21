@@ -23,13 +23,13 @@ snd (x,y) = y
 type Edge  vertex = (vertex, vertex)
 type Cycle vertex = [vertex]
 
-stronglyConnComp :: Eq vertex => [Edge vertex] -> [vertex] -> [[vertex]]
+stronglyConnComp :: Eq vertex => (vertex -> [vertex] -> [vertex]) -> [Edge vertex] -> [vertex] -> [[vertex]]
 -- stronglyConnComp :: [Edge Int] -> [Int] -> [[Int]]
 
-stronglyConnComp es vs
+stronglyConnComp f es vs
   = snd (span_tree (new_range reversed_edges)
                    ([],[])
-                   ( snd (dfs (new_range es) ([],[]) vs) )
+                   ( snd (dfs f (new_range es) ([],[]) vs) )
         )
  where
    -- reversed_edges :: [Edge Int]
@@ -54,9 +54,10 @@ stronglyConnComp es vs
        | x `elem` vs = span_tree r (vs,ns) xs
        | True = span_tree r (vs',(x:ns'):ns) xs
          where
-           (vs',ns') = dfs r (x:vs,[]) (r x)
+           (vs',ns') = dfs f r (x:vs,[]) (r x)
 
-dfs :: Eq v => (v -> [v])
+dfs :: Eq v => (v -> [v] -> [v])
+            -> (v -> [v])
             -> ([v], [v])
             -> [v]
             -> ([v], [v])
@@ -66,8 +67,10 @@ dfs :: (Int -> [Int])
             -> [Int]
             -> ([Int], [Int])
 -}
-dfs r (vs,ns)   []   = (vs,ns)
-dfs r (vs,ns) (x:xs) | x `elem` vs = dfs r (vs,ns) xs
-                     | True = dfs r (vs',(x:ns')++ns) xs
+dfs f r (vs,ns)   []   = (vs,ns)
+dfs f r (vs,ns) (x:xs) | x `elem` vs = dfs f r (vs,ns) xs
+-- SYMFUN: The following line makes use of symbolic function
+                     | f x vs /= f x ns = dfs f r (f x vs, f x ns) xs
+                     | True = dfs f r (vs',(x:ns')++ns) xs
                                    where
-                                     (vs',ns') = dfs r (x:vs,[]) (r x)
+                                     (vs',ns') = dfs f r (x:vs,[]) (r x)

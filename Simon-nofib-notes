@@ -45,9 +45,7 @@ CallStack (from HasCallStack):
 
 rfib
 ~~~~
-G2: Unrecognized Data (DataCon {dc_name = Name "D#" (Just "GHC.Types") 8214565720323790799 (Just (Span {start = Loc {line = 38, col = 15, file = "/Users/abhachaudhary/.g2/base-4.9.1.0/GHC/Types2.hs"}, end = Loc {line = 38, col = 25, file = "/Users/abhachaudhary/.g2/base-4.9.1.0/GHC/Types2.hs"}})), dc_type = TyFun (TyLitFP 11 53) (TyCon (Name "Double" (Just "GHC.Types") 8214565720323790798 Nothing) TYPE), dc_univ_tyvars = [], dc_exist_tyvars = []}) with args [Lit (LitDouble 1.0)] in funcToSMT
-CallStack (from HasCallStack):
-  error, called at src/G2/Solver/Converters.hs:418:17 in g2-0.2.0.0-inplace:G2.Solver.Converters
+It's working
 
 
 ---------------------------------------
@@ -66,17 +64,27 @@ awards
 ~~~~~~
 Same for this one.
 
+banner
+~~~~~~
+
 boyer
 ~~~~~
 
+boyer2
+~~~~~~
+No output for 1 minute
+
 calendar
 ~~~~~~~~
-Changed main function such that it doesn't return an IO.
-Difficult function to declare a symbolic function since there's no branching further in the program except at the begining.
+returns a constant function right now
 
 cichelli
 ~~~~~~~~
 Module not loaded error
+
+circsim
+~~~~~~~
+returns a constant function right now
 
 clausify
 ~~~~~~~~
@@ -97,9 +105,7 @@ Working
 
 exact-reals
 ~~~~~~~~~~~
-G2: evalVar: bad input.Id (Name "$fRealFracRatio" (Just "GHC.Real") 8214565720323789203 Nothing) (TyForAll (Id (Name "a" Nothing 6989586621679016840 Nothing) TYPE) (TyFun (TyApp (TyCon (Name "Integral" (Just "GHC.Real") 8214565720323800771 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyVar (Id (Name "a" Nothing 6989586621679016840 Nothing) TYPE))) (TyApp (TyCon (Name "RealFrac" (Just "GHC.Real") 8214565720323800784 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyApp (TyCon (Name "Ratio" (Just "GHC.Real") 8214565720323800779 Nothing) (TyFun TYPE TYPE)) (TyVar (Id (Name "a" Nothing 6989586621679016840 Nothing) TYPE))))))
-CallStack (from HasCallStack):
-  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+It's working
 
 expert
 ~~~~~~
@@ -168,10 +174,7 @@ Big program with no branching, not producing any output right now
 
 power
 ~~~~~
-
-G2: evalVar: bad input.Id (Name "$fFractionalRatio" (Just "GHC.Real") 8214565720323786135 Nothing) (TyForAll (Id (Name "a" Nothing 6989586621679016094 Nothing) TYPE) (TyFun (TyApp (TyCon (Name "Integral" (Just "GHC.Real") 8214565720323797181 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyVar (Id (Name "a" Nothing 6989586621679016094 Nothing) TYPE))) (TyApp (TyCon (Name "Fractional" (Just "GHC.Real") 8214565720323797177 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyApp (TyCon (Name "Ratio" (Just "GHC.Real") 8214565720323797189 Nothing) (TyFun TYPE TYPE)) (TyVar (Id (Name "a" Nothing 6989586621679016094 Nothing) TYPE))))))
-CallStack (from HasCallStack):
-  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+Only returning const function
 
 pretty
 ~~~~~~
@@ -183,9 +186,39 @@ Not generating non const function
 
 puzzle
 ~~~~~~
-
+No output for 2 minutes
 
 rewrite
 ~~~~~~~
+Very Big program, not done yet
+
+scc
+~~~
+No output for 2 minutes
+
+simple
+~~~~~~
+G2: evalVar: bad input.Id (Name "elems" (Just "GHC.Arr") 8214565720323788108 Nothing) (TyForAll (Id (Name "i" Nothing 6989586621679019734 Nothing) TYPE) (TyForAll (Id (Name "e" Nothing 6989586621679019735 Nothing) TYPE) (TyFun (TyApp (TyApp (TyCon (Name "Array" (Just "GHC.Arr") 8214565720323785669 Nothing) (TyFun TYPE (TyFun TYPE TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679019734 Nothing) TYPE))) (TyVar (Id (Name "e" Nothing 6989586621679019735 Nothing) TYPE))) (TyApp (TyCon (Name "[]" (Just "GHC.Types") 0 Nothing) (TyFun TYPE TYPE)) (TyVar (Id (Name "e" Nothing 6989586621679019735 Nothing) TYPE))))))
+CallStack (from HasCallStack):
+
+sorting
+~~~~~~~
+Can't add symbolic function
+
+sphere
+~~~~~~
+returns a constant function right now
+
+treejoin
+~~~~~~~~
+
+
+secretary
+~~~~~~~~~
+Could not find module ‘System.Random’
+    Use -v (or `:set -v` in ghci) to see a list of the files searched for.
+
+
+
 
 

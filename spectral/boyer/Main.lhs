@@ -31,7 +31,7 @@ Each function has an associated set of lemmas which specify how an
 application of that function may be rewritten.
 \begin{code}
 
-module Main (main) where
+module Main2 (main) where
 
 import System.Environment
 import Control.Monad (forM_)
@@ -232,9 +232,12 @@ actually relevant to the truth of the theorem.  In fact none of them
 can be rewritten in any interesting way.
 \begin{code}
 
-main = forM_ [1..100] $ const $ do
-  n <- mkSymbolic
-  print (test (read n))
+--main = forM_ [1..100] $ const $ do
+--  n <- mkSymbolic
+--  print (test (read n))
+
+main :: Int -> Bool
+main n = test n
 
 test :: Int -> Bool
 test n = all test0 xs

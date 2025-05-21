@@ -14,7 +14,7 @@ Haskell version:
 
 -}
 
-module Main(main) where
+module Main2 (main) where
 
 import Lisplikefns
 import Rewritefns
@@ -50,8 +50,8 @@ addlemma (Cons (x, y)) term
    and invokes the tautology checker
 -}
 
-tautp :: Lisplist -> Bool
-tautp term = tautologyp (rewrite term lemmas, Nil, Nil)
+tautp :: ((Lisplist, Lisplist) -> Bool) -> Lisplist -> Bool
+tautp f term = tautologyp f (rewrite term lemmas, Nil, Nil)
 
 {-
   The test statement and
@@ -84,14 +84,16 @@ subterm i = mkLisplist (strToToken str)
 teststatement :: Int -> Lisplist
 teststatement i = applysubst (subterm i) statement
 
-testresult :: Int -> Bool
-testresult i = tautp (teststatement i)
+testresult :: ((Lisplist, Lisplist) -> Bool) -> Int -> Bool
+testresult f i = tautp f (teststatement i)
 
 report :: Bool -> String
 report True  = "The term is a tautology\n"
 report False = "The term is not a tautology\n"
 
-main = do
-  (n:_) <- getArgs
-  forM_ [1..read n] $ \i -> do
-    putStr (report (testresult i))
+-- main = do
+--   (n:_) <- getArgs
+--   forM_ [1..read n] $ \i -> do
+--     putStr (report (testresult i))
+
+main symFun n = testresult symFun n

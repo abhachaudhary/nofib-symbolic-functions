@@ -10,7 +10,7 @@ I have been doing probability theory tests. One of them involved the so
 called "secretary problem". Here is my code:
 
 \begin{code}
-module Main where
+module Main2 where
 
 import System.Random
 import Data.List
@@ -37,8 +37,10 @@ sim k = simulate 5000 100 proc
     bestk  = maximum (take k xs)
     afterk = dropWhile (< bestk) (drop k xs)
 
-main :: IO ()
-main = print [ sim k | k <- [35..39] ]
+--main :: IO ()
+--main = print [ sim k | k <- [35..39] ]
+main :: Double
+main symFun = [ sim k | k <- [35..39] ]
 \end{code}
 
 When I run this module with ghc-4.01, I get _wrong_ results, and a bus

@@ -346,9 +346,9 @@ length of "inputs_list" corresponds to the number of cycles that we
 are simulating.
 
 
-> circuit_simulate :: Signal a => [[a]] -> Circuit a -> [[a]]
-> circuit_simulate inputs_list circuit
->	= map collect_outputs (simulate inputs_list circuit)
+> circuit_simulate :: Signal a => (Int -> Int) -> [[a]] -> Circuit a -> [[a]]
+> circuit_simulate f inputs_list circuit
+>	= map collect_outputs (simulate f inputs_list circuit)
 
 
 Pick up the values held in the output components for a circuit
@@ -361,9 +361,9 @@ Pick up the values held in the output components for a circuit
 >	third (_,_,v) = v
 
 
-> simulate :: Signal a => [[a]] -> Circuit a -> [Circuit a]
-> simulate inputs_list circuit@(size, ins, outs, states)
->	= tail (scanl (do_cycle cpd) circuit' inputs_list)
+> simulate :: Signal a => (Int -> Int) -> [[a]] -> Circuit a -> [Circuit a]
+> simulate f inputs_list circuit@(size, ins, outs, states)
+>	= tail (scanl (do_cycle f cpd) circuit' inputs_list)
 >     where
 >	circuit' = (size, ins, outs, map init_dffs states)
 >	cpd = critical_path_depth circuit
@@ -373,13 +373,13 @@ Pick up the values held in the output components for a circuit
 "inputs" is a list of signals.  The order is important because it
 relates the input values with input labels.
 
-> do_cycle :: Signal a => Int -> Circuit a -> [a] -> Circuit a
-> do_cycle cpd (size, ins, outs, states) inputs = (size, ins, outs, states4)
+> do_cycle :: Signal a => (Int -> Int) -> Int -> Circuit a -> [a] -> Circuit a
+> do_cycle f cpd (size, ins, outs, states) inputs = (size, ins, outs, states4)
 >     where
 >	states1 = map (store_inputs (zip ins inputs)) states
 >	states2 = do_sends 0 states1
 >	states3 = foldl sim_then_send states2 [1..cpd]
->	sim_then_send state d = do_sends d (simulate_components d state)
+>	sim_then_send state d = do_sends d (simulate_components f d state)
 >	states4 = restore_requests states states3
 
 
@@ -500,13 +500,13 @@ Make all requests False that are not at depth "d"
 --------------------------------------------------------------------------------
 Simulate all components at path depth "depth"
 
-> simulate_components :: Signal a => Int -> [State a] -> [State a]
-> simulate_components depth states
->	= map (simulate_component depth) states
+> simulate_components :: Signal a => (Int -> Int) -> Int -> [State a] -> [State a]
+> simulate_components f depth states
+>	= map (simulate_component f depth) states
 
 
-> simulate_component :: Signal a => Int -> State a -> State a
-> simulate_component d state = if d == pathDepth state && new_value/=Nothing
+> simulate_component :: Signal a => (Int -> Int) -> Int -> State a -> State a
+> simulate_component f d state = if f d /= f (pathDepth state)  && d == pathDepth state && new_value/=Nothing
 >		  		 then let Just v = new_value
 >				      in update_outports state v
 >				 else state
@@ -657,14 +657,17 @@ To run (with ghc) for a (8 bit register) circuit over 1000 cycles
 % ghc -o circ_sim circ_sim.lhs
 % circ_sim 8 1000
 
-> main :: IO ()
-> main = forM_ [1..97] $ const $ do
->   (num_bits:num_cycles:_) <- getArgs
->   print (run (read num_bits) (read num_cycles))
+> -- main :: IO ()
+> --main = forM_ [1..97] $ const $ do
+> --  (num_bits:num_cycles:_) <- getArgs
+> --  print (run (read num_bits) (read num_cycles))
+
+> main2 :: (Int -> Int) -> Int -> Int -> [[Boolean]]
+> main2 symFun num_bits num_cycles = run symFun num_bits num_cycles
 
 
-> run :: Int -> Int -> [[Boolean]]
-> run num_bits num_cycles = circuit_simulate cycles example
+> run :: (Int -> Int) -> Int -> Int -> [[Boolean]]
+> run f num_bits num_cycles = circuit_simulate f cycles example
 >	where
 >	example = pad_circuit (regs num_bits)
 >	cycles = take num_cycles (repeat inputs)

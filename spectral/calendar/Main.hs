@@ -128,7 +128,7 @@ calFor year i f | illFormed = -1 -- -1 represents error "Bad argument"
                       -- offset yr by the input parameter, so that this isn't
                       -- turned into a CAF
                       yr        = atoi ds + i
-                      atoi s    = foldl (\a d -> 10*a+d) 0 (map toDigit s)
+                      atoi s    = foldl f 0 (map toDigit s)
                       toDigit d = fromEnum d - fromEnum '0'
 
 

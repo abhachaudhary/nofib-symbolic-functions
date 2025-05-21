@@ -75,14 +75,17 @@ forceTree Empty = ()
     The keys are derived from the entities read in using the function "fk".
 -}
 
-readTree :: (Entity->Key) -> String -> Tree Entity -> Tree Entity
-readTree fk [] t = t
-readTree fk s t =
-    let (f,s') = readInt s; (g,s'') = readInt s'; (h,s''') = readInt s''
-	e = (f,g,h)
-	k = fk e
+readTree :: ((Entity -> Key) -> Key -> Key) -> (Entity->Key) -> String -> Tree Entity -> Tree Entity
+readTree symFun fk [] t = t
+readTree symFun fk s t =
+    let 
+        (f,s') = readInt s; (g,s'') = readInt s'; (h,s''') = readInt s''
+        e = (f,g,h)
+        k = fk e
+        l = symFun fk k
+        m = symFun (\(x,y,z)->x+y+z) k
     in
-	readTree fk s''' (insertT k e t)
+        if l >= m then readTree symFun fk s''' (insertT l e t) else readTree symFun fk s''' (insertT k e t)
 
 
 readInt :: String -> (Int,String)
@@ -112,11 +115,18 @@ join (Node k l r) t j = join l t (join r t j)
     of the join is discarded.
 -}
 
-main = replicateM_ 100 $ do
-      ~(f1 : ~(f2 : _ )) <- getArgs
-      c1 <- readFile f1
-      c2 <- readFile f2
-      let a = readTree  (\(x,_,_)->x) c1 Empty
-      let b = readTree  (\(x,_,_)->x) c2 Empty
-      print (forceTree (join a b Empty))
+-- main = replicateM_ 100 $ do
+--       ~(f1 : ~(f2 : _ )) <- getArgs
+--       c1 <- readFile f1
+--       c2 <- readFile f2
+--       let a = readTree  (\(x,_,_)->x) c1 Empty
+--       let b = readTree  (\(x,_,_)->x) c2 Empty
+--       print (forceTree (join a b Empty))
 -- print (join a b Empty)
+
+main2 symFun c1 c2 =
+    let
+        a = readTree symFun (\(x,_,_)->x) c1 Empty
+        b = readTree symFun (\(x,_,_)->x) c2 Empty
+    in 
+        join a b Empty
