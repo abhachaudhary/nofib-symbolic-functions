@@ -35,7 +35,8 @@ main symFun p =
 		salt = fromIntegral (min 0 p)
 		rnf = rnfListOfRational
 		rnf1 = extract p (sinx - sqrt (1-cosx^(2+salt)))
-		rnf2 = rnf (extract p (sinx/cosx - revert symFun (integral (1/(1+x^(2+salt))))))
+		-- SYMFUN: The following line makes use of symbolic function
+		rnf2 = rnf (extract p (sinx/cosx - symFun (revert (integral (1/(1+x^(2+salt)))))))
 		rnf3 = rnf (extract p ts)
 		rnf4 = rnf (extract p tree)
 	in
@@ -62,7 +63,7 @@ extract n (x :+: ps) = x : extract (n-1) ps
 deriv:: Num a => Ps a -> Ps a
 integral:: Fractional a => Ps a -> Ps a
 compose:: (Eq a, Num a) => Ps a -> Ps a -> Ps a
-revert:: (Eq a, Fractional a) => (a -> a) -> Ps a -> Ps a
+revert:: (Eq a, Fractional a) => Ps a -> Ps a
 toList:: Num a => Ps a -> [a]
 takePs:: Num a => Int -> Ps a -> [a]
 (.*):: Num a => a -> Ps a -> Ps a
@@ -120,11 +121,9 @@ compose (f :+: _) Pz = f :+: Pz
 compose (f :+: fs) (0 :+: gs) = f :+: gs*(compose fs (0 :+: gs))
 compose (f :+: fs) gs = (f :+: Pz) + gs*(compose fs gs)	--(4)
 
-revert f (0 :+: fs) = rs where
+revert (0 :+: fs) = rs where
 	rs = 0 :+: 1/(compose fs rs)
--- SYMFUN: The following line makes use of symbolic function
-revert f (f0 :+: f1 :+: Pz) | f f0 == 1, f f1 == 0 = -1/f0 :+: 1/f0 :+: Pz
-revert f (f0 :+: f1 :+: Pz) = -1/f1 :+: 1/f1 :+: Pz
+revert (f0 :+: f1 :+: Pz) = -1/f1 :+: 1/f1 :+: Pz
 
 deriv Pz = Pz
 deriv (_ :+: fs) = deriv1 fs 1 where
