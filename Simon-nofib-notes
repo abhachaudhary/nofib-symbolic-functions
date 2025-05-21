@@ -131,6 +131,16 @@ expert
 ~~~~~~
 Not interesting right now
 
+fft2
+~~~~
+/Users/abhachaudhary/.g2/base-4.9.1.0/Data/Complex.hs:109:16: error:
+    Not in scope: ‘phase’
+    |
+109 | {-# SPECIALISE phase :: Complex Double -> Double #-}
+    |                ^^^^^
+G2: /Users/abhachaudhary/.g2/base-4.9.1.0/Data/Complex.hs:109:16: error:
+    Not in scope: `phase'
+
 fibheaps
 ~~~~~~~~
 G2: evalVar: bad input.Id (Name "newArray" (Just "Data.Array.Base") 8214565720323785191 Nothing) (TyForAll (Id (Name "a" Nothing 6989586621679016905 Nothing) (TyFun TYPE (TyFun TYPE TYPE))) (TyForAll (Id (Name "e" Nothing 6989586621679016906 Nothing) TYPE) (TyForAll (Id (Name "m" Nothing 6989586621679016907 Nothing) (TyFun TYPE TYPE)) (TyFun (TyApp (TyApp (TyApp (TyCon (Name "MArray" (Just "Data.Array.Base") 8214565720323785189 Nothing) (TyFun (TyFun TYPE (TyFun TYPE TYPE)) (TyFun TYPE (TyFun (TyFun TYPE TYPE) (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))))) (TyVar (Id (Name "a" Nothing 6989586621679016905 Nothing) (TyFun TYPE (TyFun TYPE TYPE))))) (TyVar (Id (Name "e" Nothing 6989586621679016906 Nothing) TYPE))) (TyVar (Id (Name "m" Nothing 6989586621679016907 Nothing) (TyFun TYPE TYPE)))) (TyForAll (Id (Name "i" Nothing 6989586621679017254 Nothing) TYPE) (TyFun (TyApp (TyCon (Name "Ix" (Just "GHC.Ix") 8214565720323972598 Nothing) (TyFun TYPE (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679017254 Nothing) TYPE))) (TyFun (TyApp (TyApp (TyCon (Name "(,)" (Just "GHC.Tuple") 0 Nothing) (TyFun TYPE (TyFun TYPE TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679017254 Nothing) TYPE))) (TyVar (Id (Name "i" Nothing 6989586621679017254 Nothing) TYPE))) (TyFun (TyVar (Id (Name "e" Nothing 6989586621679016906 Nothing) TYPE)) (TyApp (TyVar (Id (Name "m" Nothing 6989586621679016907 Nothing) (TyFun TYPE TYPE))) (TyApp (TyApp (TyVar (Id (Name "a" Nothing 6989586621679016905 Nothing) (TyFun TYPE (TyFun TYPE TYPE)))) (TyVar (Id (Name "i" Nothing 6989586621679017254 Nothing) TYPE))) (TyVar (Id (Name "e" Nothing 6989586621679016906 Nothing) TYPE))))))))))))

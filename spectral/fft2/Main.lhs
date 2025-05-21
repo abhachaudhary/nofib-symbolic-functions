@@ -1,4 +1,4 @@
-> module Main(main) -- floating point benchmark - Fourier transforms
+> module Main2 (main) -- floating point benchmark - Fourier transforms
 > where             --     Rex Page (rpage@trc.amoco.com)
 > import Fourier    --     Amoco Production Research, Sep 1992
 > import Complex_Vectors
@@ -11,17 +11,22 @@
 
 Only print the results of requested.
 
-> main = forM_ [1..100] $ \i -> do
->   (n:args) <- getArgs
->   let withPrint = elem "print" args
->   let m = read n + i / 15 :: Double
->   let results = ("result1 = " ++ show (result1 m) ++ "\n" ++
->	      "result2 = " ++ show (result2 m) ++ "\n" ++
->	      "result3 = " ++ show (result3 m) ++ "\n")
->   if withPrint
->     then putStr results
->     else length (show results) `seq` return ()
+> -- main = forM_ [1..100] $ \i -> do
+> --  (n:args) <- getArgs
+> --  let withPrint = elem "print" args
+> --  let m = read n + i / 15 :: Double
+> --  let results = ("result1 = " ++ show (result1 m) ++ "\n" ++
+>	--      "result2 = " ++ show (result2 m) ++ "\n" ++
+>	--      "result3 = " ++ show (result3 m) ++ "\n")
+> --  if withPrint
+> --    then putStr results
+> --    else length (show results) `seq` return ()
 
+> main i n args = 
+>    let 
+>        m = read n + i / 15
+>        results = ((result1 m), (result2 m) , (result3 m))
+>    in results
 > result1 m =
 >         tstfft(rmwC  m)
 
