@@ -1,0 +1,16 @@
+boyer
+boyer2
+calendar
+cichelli
+circsim
+clausify
+constraints
+cryptarithm1
+cse
+eliza
+exact-reals
+expert
+gcd
+integer
+lcss
+life
