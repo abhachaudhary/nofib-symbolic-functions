@@ -13,7 +13,7 @@
 -- Mark P. Jones, 1992
 --
 
-module Main (main) where
+module Main2 (main) where
 
 import StateMonad
 import Control.Monad (forM_)
@@ -72,28 +72,30 @@ visited n     = fetch                               `bind` \us ->
 -- replacement?) which maps node labels in the original graph to the approp.
 -- labels in the new graph.
 
-findCommon :: Eq a => LabGraph a -> LabGraph a
-findCommon  = snd . foldr sim (id,[])
+findCommon :: Eq a => (Label -> Label) -> LabGraph a -> LabGraph a
+findCommon f  = snd . foldr (sim f) (id,[])
  where
    sim ::
-     Eq a => (Label,a,[Label]) -> (Label -> Label, LabGraph a) ->
+     Eq a => (Label -> Label) -> (Label,a,[Label]) -> (Label -> Label, LabGraph a) ->
      (Label -> Label, LabGraph a)
-   sim (n,s,cs) (r,lg) =
+   sim f (n,s,cs) (r,lg) =
      if null ms then
        (r, [(n,s,rcs)] ++ lg)
      else
        ((n +=> head ms) r, lg)
          where
 	   ms  = [m | (m,s',cs')<-lg, s==s', cs'==rcs]
-           rcs = map r cs
+     -- SYMFUN: The following line makes use of symbolic function
+           temp = map f cs
+           rcs = map r temp
 
 (+=>) :: Eq a => a -> b -> (a -> b) -> (a -> b)
 (+=>) x fx f y  = if x==y then fx else f y
 
 -- Common subexpression elimination: -----------------------------------------
 
-cse :: Eq a => GenTree a -> LabGraph a
-cse  = findCommon . ltGraph . labelTree
+cse :: Eq a => (Label -> Label) -> GenTree a -> LabGraph a
+cse f  = (findCommon f) . ltGraph . labelTree
 
 -- Pretty printers: ----------------------------------------------------------
 
@@ -172,10 +174,12 @@ instance NFData Int where
 instance NFData Char where
   rnf c = c `seq` ()
 
-main = do
-  (n:_) <- getArgs
-  forM_ [1..read n] $ \i -> do
-    rnf (map cse (take (i `mod` 6) examples)) `seq` return ()
+-- main = do
+--   (n:_) <- getArgs
+--   forM_ [1..read n] $ \i -> do
+--     rnf (map cse (take (i `mod` 6) examples)) `seq` return ()
+
+main symFun n = map (cse symFun) (take (n `mod` 6) examples)
 
 {-----------------------------------------------------------------------------
 Expression:

@@ -13,13 +13,20 @@ import G2.Symbolic
 -- The main program
 -----------------------------
 
-main = do
-  arg <- mkSymbolic
-  symFun <- mkSymbolic
+-- main = do
+--   arg <- mkSymbolic
+--   symFun <- mkSymbolic
+--   let
+--     n = read arg :: Int
+--     try algorithm = print (length (search algorithm (queens n)))
+--   sequence_ (map try [(bt symFun), bm, (bjbt symFun), (bjbt' symFun), fc])
+
+main2 :: (CSP -> State -> ConflictSet) -> Int -> [Int]
+main2 symFun n = 
   let
-    n = read arg :: Int
-    try algorithm = print (length (search algorithm (queens n)))
-  sequence_ (map try [(bt symFun), bm, (bjbt symFun), (bjbt' symFun), fc])
+    try algorithm = length (search algorithm (queens n))
+  in
+    map try [(bt symFun), bm, (bjbt symFun), (bjbt' symFun), fc]
 
 -----------------------------
 -- Figure 1. CSPs in Haskell.

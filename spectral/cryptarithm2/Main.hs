@@ -12,7 +12,7 @@ in the function solve. It prunes searches than simply
 can not ever reach valid results.
 -}
 
-module Main where
+module Main2 where
 
 import Control.Monad
 import Control.Monad.Trans.State
@@ -61,12 +61,14 @@ permute c =
 -- mapped. If so, use the mapping, otherwise
 -- add a new mapping.
 
-select :: Char -> DigitState Int
-select c =
+select :: ((Char -> DigitState Int) -> DigitState Int) -> Char -> DigitState Int
+select f c =
      do st <- get
 	case lookup c (digitEnv st) of
 	  Just r -> return r
-	  Nothing -> permute c
+	--   Nothing -> permute c
+	-- SYMFUN: The following line makes use of symbolic function
+	  Nothing -> f permute
 
 -- solve takes a list of list of (backwards) letters,
 -- and a list of (backwards) letters, and tries
@@ -79,27 +81,27 @@ select c =
 -- solve ["A","B"] "C" 0
 -- 	  => A -> 1, B -> 2, C -> 3
 
-solve :: [[Char]] -> [Char] -> Int -> DigitState ()
-solve tops (bot:bots) carry =
+solve :: ((Char -> DigitState Int) -> DigitState Int) -> [[Char]] -> [Char] -> Int -> DigitState ()
+solve f tops (bot:bots) carry =
   do topN <- (case tops of
 		   [] -> return carry
 		   (top:_) ->
-		     do topNS <- mapM select top
+		     do topNS <- mapM (select f) top
 	     	        return (sum topNS + carry))
-     botN <- select bot
+     botN <- select f bot
      guard (topN `mod` 10 == botN)	-- key optimization
-     solve (rest tops) bots (topN `div` 10)
+     solve f (rest tops) bots (topN `div` 10)
   where
      rest []     = []
      rest (x:xs) = xs
-solve [] [] 0 = return ()
-solve _  _  _ = mzero
+solve f [] [] 0 = return ()
+solve f _  _  _ = mzero
 
 -- Puzzle provides a cleaner interface into solve.
 -- The strings are in the order *we* write them.
 
-puzzle :: [[Char]] -> [Char] -> String
-puzzle top bot =
+puzzle :: ((Char -> DigitState Int) -> DigitState Int) -> [[Char]] -> [Char] -> String
+puzzle f top bot =
 	     if length (nub (concat top ++ bot)) > 10
 	     then error "can not map more than 10 chars"
 	else if topVal /= botVal
@@ -108,7 +110,7 @@ puzzle top bot =
 			(c,i) <- digitEnv answer
 		   ]
    where
-	solution = solve (transpose (map reverse top))
+	solution = solve f (transpose (map reverse top))
 			 (reverse bot)
 			 0
 	answer  = case (execStateT solution initState) of
@@ -120,14 +122,20 @@ puzzle top bot =
 	botVal = expand bot
 	expand = foldl (\ a b -> a * 10 + look b) 0
 
-main = do
-  (n:_) <- getArgs
-  forM_ [1..read n] $ \i -> do
-    let args = [ "THIRTY"
-               , "TWELVE"
-               , "TWELVE"
-               , "TWELVE"
-               , "TWELVE"
-               , "TWELVE" ++ if i > 999999 then "1" else ""
-               ]
-    putStr (puzzle args "NINETY")
+-- main = do
+--   (n:_) <- getArgs
+--   forM_ [1..read n] $ \i -> do
+--     let args = [ "THIRTY"
+--                , "TWELVE"
+--                , "TWELVE"
+--                , "TWELVE"
+--                , "TWELVE"
+--                , "TWELVE" ++ if i > 999999 then "1" else ""
+--                ]
+--     putStr (puzzle args "NINETY")
+
+main symFun n = 
+	let
+		args = [ "THIRTY" , "TWELVE" , "TWELVE" , "TWELVE" , "TWELVE" , "TWELVE" ++ if n > 999999 then "1" else ""]
+	in 
+		puzzle symFun args "NINETY"

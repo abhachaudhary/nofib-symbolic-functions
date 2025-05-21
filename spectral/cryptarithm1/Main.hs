@@ -110,27 +110,37 @@ mechvel@botik.ru
 -- Haskell ---------------------------------------------------------
 
 import System.Environment (getArgs)
-import Control.Monad (forM_)
+import G2.Symbolic
 
-main = getArgs >>= \[n] -> forM_ [1..read n] $ \i -> do
+-- main = getArgs >>= \[n] -> forM_ [1..read n] $ \i -> do
+--   let
+--     p0                              = take 10 [0..9+i] :: [Int]
+--     condition [t,h,i,r,y,w,e,l,v,n] =
+--       expand t h i r t y + 5 * expand t w e l v e ==
+--       expand n i n e t y
+--   putStr $ shows (filter condition $ permutations p0) "\n"
+
+main2 symFun n = 
   let
-    p0                              = take 10 [0..9+i] :: [Int]
+    p0 = take 10 [0..9+n]
     condition [t,h,i,r,y,w,e,l,v,n] =
       expand t h i r t y + 5 * expand t w e l v e ==
       expand n i n e t y
-  putStr $ shows (filter condition $ permutations p0) "\n"
+    in
+      assume (n > 0) filter condition $ permutations symFun p0
 
 expand a b c d e f = f + e*10 + d*100 + c*1000 + b*10000 + a*100000
                      :: Int
 
-permutations :: [Int] -> [[Int]]
+permutations :: (Int -> Int) -> [Int] -> [[Int]]
             -- build the full permutation list given an ordered list
 
-permutations []     = [[]]
-permutations (j:js) = [r | pjs <- permutations js, r <- addj pjs]
+permutations f []     = [[]]
+permutations f (j:js) = [r | pjs <- permutations f js, r <- addj f pjs]
                   where
-                  addj []     = [[j]]
-                  addj (k:ks) = (j:k:ks): [(k:aks) | aks <- addj ks]
+                  addj f []     = [[j]]
+                  -- SYMFUN: The following line makes use of symbolic function
+                  addj f (k:ks) = if f k > f j then [[k]] else (j:k:ks): [(k:aks) | aks <- addj f ks]
 
 {-
 -- C++  ------------------------------------------------------------

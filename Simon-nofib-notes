@@ -99,6 +99,26 @@ I don;t see it's generating any symbolic function instantiation
 ((coerce (main :: (IO ()))) :: (State# RealWorld) -> (((((#,#) LiftedRep) LiftedRep) (State# RealWorld)) ())) (State# RealWorld) = error	| generated: " "
 ((coerce (main :: (IO ()))) :: (State# RealWorld) -> (((((#,#) LiftedRep) LiftedRep) (State# RealWorld)) ())) (State# RealWorld) = error	| generated: []
 
+cryptarithm1
+~~~~~~~~~~~~
+It's working
+
+cryptarithm2
+~~~~~~~~~~~~
+G2: evalVar: bad input.Id (Name "pushCallStack" (Just "GHC.Stack.Types") 3458764513820541487 Nothing) (TyFun (TyApp (TyApp (TyCon (Name "(,)" (Just "GHC.Tuple") 0 Nothing) (TyFun TYPE (TyFun TYPE TYPE))) (TyApp (TyCon (Name "[]" (Just "GHC.Types") 0 Nothing) (TyFun TYPE TYPE)) (TyCon (Name "Char" (Just "GHC.Types") 3674937295934324752 Nothing) TYPE))) (TyCon (Name "SrcLoc" (Just "GHC.Stack.Types") 8214565720323793942 Nothing) TYPE)) (TyFun (TyCon (Name "CallStack" (Just "GHC.Stack.Types") 3674937295934325118 Nothing) TYPE) (TyCon (Name "CallStack" (Just "GHC.Stack.Types") 3674937295934325118 Nothing) TYPE)))
+CallStack (from HasCallStack):
+  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+
+cse
+~~~
+It's working
+
+dom-lt
+~~~~~~
+G2: evalVar: bad input.Id (Name "second" (Just "Data.Bifunctor") 8214565720323785013 Nothing) (TyForAll (Id (Name "p" Nothing 6989586621679019400 Nothing) (TyFun TYPE (TyFun TYPE TYPE))) (TyFun (TyApp (TyCon (Name "Bifunctor" (Just "Data.Bifunctor") 8214565720323785010 Nothing) (TyFun (TyFun TYPE (TyFun TYPE TYPE)) (TyCon (Name "Constraint" (Just "GHC.Types") 3674937295934324920 Nothing) TYPE))) (TyVar (Id (Name "p" Nothing 6989586621679019400 Nothing) (TyFun TYPE (TyFun TYPE TYPE))))) (TyForAll (Id (Name "b" Nothing 6989586621679019403 Nothing) TYPE) (TyForAll (Id (Name "c" Nothing 6989586621679019404 Nothing) TYPE) (TyForAll (Id (Name "a" Nothing 6989586621679019405 Nothing) TYPE) (TyFun (TyFun (TyVar (Id (Name "b" Nothing 6989586621679019403 Nothing) TYPE)) (TyVar (Id (Name "c" Nothing 6989586621679019404 Nothing) TYPE))) (TyFun (TyApp (TyApp (TyVar (Id (Name "p" Nothing 6989586621679019400 Nothing) (TyFun TYPE (TyFun TYPE TYPE)))) (TyVar (Id (Name "a" Nothing 6989586621679019405 Nothing) TYPE))) (TyVar (Id (Name "b" Nothing 6989586621679019403 Nothing) TYPE))) (TyApp (TyApp (TyVar (Id (Name "p" Nothing 6989586621679019400 Nothing) (TyFun TYPE (TyFun TYPE TYPE)))) (TyVar (Id (Name "a" Nothing 6989586621679019405 Nothing) TYPE))) (TyVar (Id (Name "c" Nothing 6989586621679019404 Nothing) TYPE))))))))))
+CallStack (from HasCallStack):
+  error, called at src/G2/Execution/Rules.hs:133:19 in g2-0.2.0.0-inplace:G2.Execution.Rules
+
 eliza
 ~~~~~
 Working
