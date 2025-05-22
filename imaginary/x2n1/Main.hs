@@ -23,15 +23,15 @@ of all the other programs I thought I'd contribute at least one :-)
 ...
 -}
 
-module Main ( main ) where
-import Data.Complex
+module Main2 ( main ) where
+import Data.Complex hiding (mkPolar)
 import System.Environment
 
-import G2.Symbolic
+main g h arg = round (realPart (sum [f g h n | n <- [1 .. (arg)]]))
 
-main = do
-	arg <- mkSymbolic
-	print (round (realPart (sum [f n | n <- [1 .. (arg)]])))
+f :: (Double -> Double) -> (Double -> Double) -> Int -> Complex Double
+f g h n = mkPolar g h 1 ((2*pi)/fromIntegral n) ^ n
 
-f :: Int -> Complex Double
-f n = mkPolar 1 ((2*pi)/fromIntegral n) ^ n
+-- | Inlined and modified from Data.Complex
+mkPolar          :: Floating a => (a -> a) -> (a -> a) -> a -> a -> Complex a
+mkPolar g h r theta  =  r * g theta :+ r * h theta
