@@ -10,7 +10,7 @@ import Control.Monad (forM_)
 data Wheel = Wheel Int [Int]
 
 
-prime :: (Wheel -> Wheel) -> Int -> Int
+prime :: ([Wheel] -> [Wheel]) -> Int -> Int
 prime f n = primes !! n
   where
     primes = sieve (wheels f primes) primes (squares primes) n
@@ -33,14 +33,14 @@ notDivBy (p:ps) (q:qs) n =
 squares :: [Int] -> [Int]
 squares ps = [p*p | p<-ps]
 
-wheels :: (Wheel -> Wheel) -> [Int] -> [Wheel]
+wheels :: ([Wheel] -> [Wheel]) -> [Int] -> [Wheel]
 wheels f ps = ws
   where
     -- SYMFUN: The following line makes use of symbolic function
-    ws = Wheel 1 [1] : zipWith (nextSize f) ws ps
+    ws = Wheel 1 [1] : f (zipWith nextSize ws ps)
 
-nextSize f (Wheel s ns) p =
-  f (Wheel (s*p) ns')
+nextSize (Wheel s ns) p =
+  Wheel (s*p) ns'
   where
   ns' = [n' | o <- [0,s..(p-1)*s],
               n <- ns,
