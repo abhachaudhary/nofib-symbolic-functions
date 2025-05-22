@@ -39,7 +39,7 @@ works.
 > -- Matching on d1:ds@(d2:_) added to force non-constant function
 > -- for code coverage
 > carryPropagate f base (d:ds)
->   | f carryguess == f (d `div` base)
+>   | f carryguess == f (carryguess + 1)
 >       = carryguess : (remainder+nextcarry) : fraction
 >   | otherwise
 >       = (dCorrected `div` base) : (dCorrected `mod` base) : fraction
