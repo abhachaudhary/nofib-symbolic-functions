@@ -10,6 +10,6 @@ the_filter (n:ns) = filter (isdivs n) ns
 
 prime :: ([Int] -> [Int]) -> Int -> Int
 -- SYMFUN: The following line makes use of symbolic function
-prime f n = map head (iterate f [2..n*n]) !! n
+prime f n = map head (iterate (f . the_filter) [2..n*n]) !! n
 
 main arg symFun = prime symFun arg
