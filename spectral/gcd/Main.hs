@@ -18,8 +18,6 @@ module Main2 (main) where
 
 import System.Environment
 
-import G2.Symbolic
-
 --------------------------------------------------------------------
              -- choose d from [100..9000] and switch Z = Int,Integer
 type Z = Integer
@@ -28,7 +26,7 @@ main arg symFun1 symFun2 =
 	-- compute  extendedGCD x y = (g,u,v)
         -- for many  x,y  and find  maximum [abs (g+u+v)]
         let
-          d      = fromIntegral (read arg :: Int) :: Z
+          d      = fromIntegral (arg :: Int) :: Z
           (n,m)  = (5000,10000) :: (Z,Z)
           ns     = [n..(n+d)]
           ms     = [m..(m+d)]

@@ -10,8 +10,6 @@ import GHC.Arr
 import System.Environment
 import Control.Monad (replicateM_)
 
-import G2.Symbolic
-
 -- Generation of radicals
 
 data Radical = H | C Radical Radical Radical

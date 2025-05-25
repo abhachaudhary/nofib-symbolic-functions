@@ -6,8 +6,6 @@ module Main2 (main) where
 import Control.Monad
 import System.Environment
 
-import G2.Symbolic
-
 start :: [[Int]]
 start = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],
          [0,0,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0]]
