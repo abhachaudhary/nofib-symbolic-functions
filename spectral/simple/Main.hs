@@ -43,18 +43,16 @@
 -- % make grid-max as the second argument for it.
 
 
-module Main where
+module Main2 where
 import Data.Array
 import Data.Ix
 import System.Environment (getArgs)
 
-import G2.Symbolic
 infixr 1 =:
 type Assoc a b = (a,b)
 (=:) = (,)
 
-main = do
-  n <- mkSymbolic
+main n = do
   if n >= 0
     then reportSimple n
     else reportSimple2 (- n)

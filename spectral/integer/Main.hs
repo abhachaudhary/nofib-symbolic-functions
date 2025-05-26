@@ -2,11 +2,11 @@ module Main2 (main) where
 
 import System.Environment
 
-main f1 f2 f3 g1 g2 g3 _1 _2 _3 = do
+main f1 f2 f3 g1 g2 g3 _1 _2 _3 = 
   --runalltests 1 20 10000 1 20 10000
   --runalltests (-1000000) 4001 1000000 (-1000000) 4001 1000000
   --runalltests (-2100000000) 4000001 2100000000 (-2100000000) 4000001 2100000000
-  let astart = _1; astep = _2; alim = _3
+  let astart = _1; astep = _2; alim = _3 in
   runalltests f1 f2 f3 g1 g2 g3 astart astep alim astart astep alim
 
 runalltests
@@ -18,10 +18,12 @@ runalltests
 	-> (Int -> Int -> b)
   -> Integer -> Integer -> Integer
 	-> Integer -> Integer -> Integer
-	-> IO ()
-runalltests f1 f2 f3 g1 g2 g3 astart astep alim bstart bstep blim = do
+	-> ()
+runalltests f1 f2 f3 g1 g2 g3 astart astep alim bstart bstep blim =
   runbench f1 g1 "(+)" astart astep alim astart astep alim
+  `seq`
   runbench f2 g2 "(-)" astart astep alim astart astep alim
+  `seq`
   runbench f3 g3 "(*)" astart astep alim astart astep alim
 
   -- runbench div div "div" astart astep alim astart astep alim
@@ -44,30 +46,31 @@ runbench
 	-> String
 	-> Integer -> Integer -> Integer
 	-> Integer -> Integer -> Integer
-	-> IO ()
-runbench jop iop opstr astart astep alim bstart bstep blim = do
+	-> ()
+runbench jop iop opstr astart astep alim bstart bstep blim =
  intbench iop astart astep alim astart astep alim
+ `seq`
  integerbench jop astart astep alim astart astep alim
 
 integerbench :: (Integer -> Integer -> a)
 	-> Integer -> Integer -> Integer
 	-> Integer -> Integer -> Integer
-	-> IO ()
-integerbench op astart astep alim bstart bstep blim = do
-  seqlist ([ a `op` b
+	-> ()
+integerbench op astart astep alim bstart bstep blim =
+  ([ a `op` b
 	   | a <- [ astart,astart+astep..alim ]
 	   , b <- [ bstart,astart+bstep..blim ]])
-  return ()
+  `seq`
+  ()
 
 intbench :: (Int -> Int -> a)
 	-> Integer -> Integer -> Integer
 	-> Integer -> Integer -> Integer
-	-> IO ()
-intbench op astart astep alim bstart bstep blim = do
+	-> ()
+intbench op astart astep alim bstart bstep blim =
   seqlist ([ a `op` b
 	   | a <- [ fromInteger astart,fromInteger astart + fromInteger astep .. fromInteger alim ]
 	   , b <- [ fromInteger bstart,fromInteger astart + fromInteger bstep .. fromInteger blim ]])
-  return ()
 
-seqlist [] = return ()
+seqlist [] = ()
 seqlist (x:xs) = x `seq` seqlist xs

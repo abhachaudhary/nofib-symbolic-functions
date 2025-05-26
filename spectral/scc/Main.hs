@@ -1,6 +1,8 @@
 -- !!! strongly-connected components of a graph
 -- (courtesy mainly of John Launchbury)
 
+module Main2 where
+
 import Digraph
 
 -- main = print (stronglyConnComp edges vertices)
@@ -26,7 +28,7 @@ import Digraph
 -- 	     (g, f),
 -- 	     (h, g)]
 
-main2 symFun = stronglyConnComp symFun edges vertices
+main symFun = stronglyConnComp symFun edges vertices
   where
     -- here's a test graph: Figure 6.4 from SLPJ 87
     a, b, c, d, f, g, h :: Int

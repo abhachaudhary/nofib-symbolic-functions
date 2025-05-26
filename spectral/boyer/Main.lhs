@@ -31,7 +31,7 @@ Each function has an associated set of lemmas which specify how an
 application of that function may be rewritten.
 \begin{code}
 
-module Main2 (main) where
+module Main2 where
 
 import System.Environment
 import Control.Monad (forM_)

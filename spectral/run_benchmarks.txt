@@ -8,9 +8,16 @@ constraints
 cryptarithm1
 cse
 eliza
-exact-reals
 expert
 gcd
 integer
 lcss
 life
+mandel2
+multiplier
+power
+primetest
+scc
+rewrite
+sphere
+treejoin

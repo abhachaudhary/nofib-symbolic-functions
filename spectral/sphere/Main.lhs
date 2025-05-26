@@ -189,11 +189,11 @@ standard balls
 --------------------------------------------------------------------------------
 main routine
 
-> ray :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Int -> [((Int, Int),Vector)]
-> ray symFun1 symFun2 winsize = [ ((i,j), f i j) | i<-[0..winsize-1], j<-[0..winsize-1]]
+> ray :: (Double -> Double) -> ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Int -> [((Int, Int),Vector)]
+> ray sym_tan symFun1 symFun2 winsize = [ ((i,j), f i j) | i<-[0..winsize-1], j<-[0..winsize-1]]
 >     where
 >       lights = testlights
->       (firstray, scrnx, scrny) = camparams lookfrom lookat vup fov (fromIntegral winsize)
+>       (firstray, scrnx, scrny) = camparams sym_tan lookfrom lookat vup fov (fromIntegral winsize)
 >       f i j = tracepixel symFun1 symFun2 world lights (fromIntegral i) (fromIntegral j) firstray scrnx scrny
 
 
@@ -201,9 +201,10 @@ main routine
 > dtor x = x*pi / 180
 
 
-> camparams :: Vector -> Vector -> Vector -> Double -> Double
+> camparams :: (Double -> Double)
+>           -> Vector -> Vector -> Vector -> Double -> Double
 >            -> (Vector, Vector, Vector)
-> camparams lookfrom lookat vup fov winsize = (firstray, scrnx, scrny)
+> camparams sym_tan lookfrom lookat vup fov winsize = (firstray, scrnx, scrny)
 >     where
 >       initfirstray = vecsub lookat lookfrom   -- pre-normalized!
 >       (lookdir, dist) = vecnorm initfirstray
@@ -213,8 +214,8 @@ main routine
 >       yfov = fov
 >       xwinsize = winsize              -- for now, square window
 >       ywinsize = winsize
->       magx = 2 * dist * (tan (dtor (xfov/2))) / xwinsize
->       magy = 2 * dist * (tan (dtor (yfov/2))) / ywinsize
+>       magx = 2 * dist * (sym_tan (dtor (xfov/2))) / xwinsize
+>       magy = 2 * dist * (sym_tan (dtor (yfov/2))) / ywinsize
 >       scrnx = vecscale scrni magx
 >       scrny = vecscale scrnj magy
 >       firstray = vecsub initfirstray
@@ -444,11 +445,11 @@ How to compile (with ghc), run (with size 100), and view (with xv):
 > --       getArgs >>= \[winsize_string] ->
 > --       run (read winsize_string)
 >
-> main :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Int -> Int
-> main symFun1 symFun2 winsize = run symFun1 symFun2 winsize
+> main :: (Double -> Double) -> ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Int -> Int
+> main sym_tan symFun1 symFun2 winsize = run sym_tan symFun1 symFun2 winsize
 >
-> run :: ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Int -> Int
-> run symFun1 symFun2 winsize = hash (map snd (ray symFun1 symFun2 winsize))
+> run :: (Double -> Double) -> ((Double -> Double) -> Double -> Double) -> (Double -> Double) -> Int -> Int
+> run sym_tan symFun1 symFun2 winsize = hash (map snd (ray sym_tan symFun1 symFun2 winsize))
 >
 > hash :: [Vector] -> Int
 > hash = foldr (\(r,g,b) acc -> u8 r + u8 g*7 + u8 b*23 + acc*61) 0

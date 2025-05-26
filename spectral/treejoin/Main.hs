@@ -4,11 +4,13 @@
     ordered, but not necessarily balanced.
 -}
 
+module Main2 where
+
 import Control.Monad (replicateM_)
 import System.Environment
 import Data.Char(isSpace,isDigit,isAlpha)
 
-data Tree e = Node Key (Tree e) (Tree e) | Leaf Key e | Empty deriving Show{-was:Text-}
+data Tree e = Node Key (Tree e) (Tree e) | Leaf Key e | Empty deriving (Eq, Show){-was:Text-}
 type Key = Int
 
 
@@ -124,9 +126,9 @@ join (Node k l r) t j = join l t (join r t j)
 --       print (forceTree (join a b Empty))
 -- print (join a b Empty)
 
-main2 symFun c1 c2 =
+main symFun1 symFun2 c1 c2 =
     let
-        a = readTree symFun (\(x,_,_)->x) c1 Empty
-        b = readTree symFun (\(x,_,_)->x) c2 Empty
+        a = readTree symFun1 (\(x,_,_)->x) c1 Empty
+        b = readTree symFun1 symFun2 c2 Empty
     in 
         join a b Empty

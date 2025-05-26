@@ -34,7 +34,7 @@ David
 -- an excellent benchmark is: (a = a = a) = (a = a = a) = (a = a = a)
 -- batch mode version David Wakeling, February 1992
 
-module Main2 (main) where
+module Main2 where
 
 import Data.Ix
 import System.Environment

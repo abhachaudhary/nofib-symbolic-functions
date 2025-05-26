@@ -7,7 +7,6 @@ module Main2 where
 
 import Control.Monad
 import System.Environment
-import NofibUtils
 
 -- a `par` b = b
 --1.3 a `seq` b = b
@@ -221,4 +220,4 @@ finite (EW t1 t2) =  (finite t1 && finite t2)
 main symFun =
     -- m should always be smaller than size, but the compiler can't know that
     let size' = 4 in
-    finite (build_tree symFun (0,0) (size',size' `div` 2)) `seq` return ()
+    finite (build_tree symFun (0,0) (size',size' `div` 2))

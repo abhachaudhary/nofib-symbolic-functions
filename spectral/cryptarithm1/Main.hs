@@ -112,7 +112,6 @@ mechvel@botik.ru
 module Main2 (main) where
 
 import System.Environment (getArgs)
-import G2.Symbolic
 
 -- main = getArgs >>= \[n] -> forM_ [1..read n] $ \i -> do
 --   let
@@ -129,7 +128,7 @@ main symFun n =
       expand t h i r t y + 5 * expand t w e l v e ==
       expand n i n e t y
     in
-      assume (n > 0) filter condition $ permutations symFun p0
+      filter condition $ permutations symFun p0
 
 expand a b c d e f = f + e*10 + d*100 + c*1000 + b*10000 + a*100000
                      :: Int

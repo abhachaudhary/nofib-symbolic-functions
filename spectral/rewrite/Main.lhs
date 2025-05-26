@@ -49,13 +49,15 @@ implementation of rewriting.
 
 - ----8<--------8<--------8<--------8<--------8<--------8<--------8<----
 
+> module Main2 where
+
 > import System.Environment (getArgs)
 
 > infixr 1             ??
 > infixr 1             |||
 > infixr 1             `cross`
 > infixr 2             -=>
-> infixr 2             ##
+> infixr 2             |##
 
 EXCEPTIONS
 
@@ -75,7 +77,7 @@ EXCEPTIONS
 > (Just x) ?? y         = x
 > Nothing ?? y          = y
 
-> (##) p q s            = p s ||| q s
+> (|##) p q s            = p s ||| q s
 
 > p -=> x               = if p then Just x else Nothing
 
@@ -154,9 +156,9 @@ PARSING
 > unExpr (Expr e)       = e
 > unString (MkString s)   = s
 
-> parse                 = unExpr . fst . the . p_expr
-> parse_eqn s = (lhs, rhs)
->               where List [Expr lhs, Expr rhs] = fst (the (p_eqn s))
+> parse _                = unExpr . fst . the . p_expr
+> parse_eqn symFun s = (lhs, rhs)
+>               where List [Expr lhs, Expr rhs] = fst (the (p_eqn symFun s))
 
 Some parsing tools:
 
@@ -179,7 +181,7 @@ Some parsing tools:
 > list_of               :: PARSER -> Char -> PARSER
 > list_of p sep         = p'
 >                         where p' = seq2 mk_cons p (seq2 sel2
->                                        (look_for sep) p' ## empty)
+>                                        (look_for sep) p' |## empty)
 >                               sel2 x y = y
 
 > sp p                  = p . dropWhile (== ' ')
@@ -195,17 +197,17 @@ Some parsing tools:
 
 The parser itself:
 
-> p_eqn = seQ q_eqn [p_expr, look_for '=', p_expr]
+> p_eqn symFun = seQ symFun [p_expr, look_for '=', p_expr]
 > q_eqn [lhs, eq, rhs] = List [lhs, rhs]
 
-> p_expr = seQ q_op [p_term, p_op, p_term] ## p_term
+> p_expr = seQ q_op [p_term, p_op, p_term] |## p_term
 > q_op [Expr a, MkString op, Expr b] = Expr (Func op [a, b])
 
 > p_term = seQ q_func [p_ident, look_for '(',
->                       list_of p_expr ',', look_for ')'] ## p_prim
+>                       list_of p_expr ',', look_for ')'] |## p_prim
 > q_func [MkString fun, lb, List args, rb] = Expr (Func fun (map unExpr args))
 
-> p_prim = p_name ## seQ (!! 1) [look_for '(', p_expr, look_for ')']
+> p_prim = p_name |## seQ (!! 1) [look_for '(', p_expr, look_for ')']
 
 > p_name = build q_name p_ident
 > q_name (MkString s) = if s!!0 >= 'a' && s!!0 <= 'z' then Expr (Var s)
@@ -295,7 +297,7 @@ REWRITING
 > rewrite (Eqn n (l, r)) = lift (sub r) . match l
 
 > try_all :: [TACTIC] -> TACTIC
-> try_all = foldr (##) (const croak)
+> try_all = foldr (|##) (const croak)
 
 > inside :: TACTIC -> TACTIC
 > inside rw t = first_ok [ lift (replace t k) (rw u)
@@ -611,7 +613,7 @@ KNUTH-BENDIX COMPLETION
 
 BENCHMARK
 
-> group_rules = map parse_eqn [
+> group_rules symFun = map (parse_eqn symFun) [
 >               "(a * b) * c = a * (b * c)",
 >               "E * x = x",
 >               "I(x) * x = E" ]
@@ -622,12 +624,12 @@ BENCHMARK
 
 > group_order = rpo (rank_order rank) lex_ext
 
-> group_completion = knuth_bendix group_order group_rules
+> group_completion symFun = knuth_bendix group_order (group_rules symFun)
 
-> result (s1, s2) = (simplify (super_reduce group_completion) (parse s1)
->            == parse s2)
+> result symFun (s1, s2) = (simplify (super_reduce (group_completion symFun)) (parse symFun s1)
+>            == parse symFun s2)
 
-> test n = all result xs
+> test symFun n = all (result symFun) xs
 >  where xs = take n (repeat ("I(a * b)", "I(b) * I(a)"))
 >	 {-# NOINLINE xs #-}
 
@@ -635,5 +637,5 @@ BENCHMARK
 > --  (n:_) <- getArgs
 > --  print (test (read n :: Int))
 
-> main2 :: Int -> Bool
-> main2 n = test n
+> main :: ([SYNVAL] -> SYNVAL) -> Int -> Bool
+> main symFun n = test symFun n

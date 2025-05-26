@@ -32,7 +32,7 @@ The Circuit Simulator example
 David J. King & John O'Donnell
 January, 1998
 
-> module Main2 (main) where
+> module Main2 where
 > import System.Environment
 > import Control.Monad (forM_)
 > import Data.List
