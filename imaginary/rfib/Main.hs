@@ -1,6 +1,6 @@
 -- !!! the ultra-notorious "nfib 30" does w/ Floats
 --
-module Main2 (main) where
+module Main2 where
 import System.Environment
 
 main arg symFun = nfib symFun arg

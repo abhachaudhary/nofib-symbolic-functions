@@ -7,7 +7,8 @@ import System.Environment
 
 main arg symFun = nsoln symFun arg
 
-nsoln f nq = length (gen f nq)
+-- Removed call to length to allow for greater coverage
+nsoln f nq =  (gen f nq)
  where
     safe :: (Int -> Int -> Bool) -> Int -> Int -> [Int] -> Bool
     safe f x d []    = True
